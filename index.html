@@ -603,7 +603,411 @@
     let memoryVal = 0;
     let lastCalculation = '';
     let calculationHistory = [];
-    let conversationHistory = [];
+    // Comprehensive Math Knowledge Base
+    const mathKnowledge = {
+      // Basic Concepts
+      "prime numbers": "Prime numbers are natural numbers greater than 1 that have no positive divisors other than 1 and themselves. Examples include 2, 3, 5, 7, 11, 13, 17, 19, 23, and so on. The number 2 is the only even prime number. Prime numbers are fundamental in number theory and have applications in cryptography and computer science.",
+      
+      "fractions": "A fraction represents a part of a whole. It consists of a numerator (top number) and denominator (bottom number). For example, 3/4 means 3 parts out of 4 equal parts. To add fractions, you need a common denominator. To multiply, multiply the numerators and denominators separately. Fractions can be converted to decimals by dividing the numerator by the denominator.",
+      
+      "decimals": "Decimals are another way to represent fractions and parts of whole numbers. The decimal point separates the whole number part from the fractional part. Each position after the decimal represents tenths, hundredths, thousandths, etc. For example, 0.5 = 1/2, 0.25 = 1/4, and 0.75 = 3/4.",
+      
+      "percentages": "A percentage is a way of expressing a number as a fraction of 100. The symbol % means 'per hundred'. For example, 50% means 50 out of 100, which equals 0.5 or 1/2. To convert a decimal to a percentage, multiply by 100. To convert a percentage to a decimal, divide by 100.",
+      
+      "even numbers": "Even numbers are integers that are divisible by 2 with no remainder. Examples: 2, 4, 6, 8, 10, 12, etc. Even numbers end in 0, 2, 4, 6, or 8. When you add two even numbers, you always get an even number. When you multiply any number by an even number, the result is even.",
+      
+      "odd numbers": "Odd numbers are integers that are not divisible by 2. Examples: 1, 3, 5, 7, 9, 11, etc. Odd numbers end in 1, 3, 5, 7, or 9. When you add two odd numbers, you get an even number. When you multiply two odd numbers, you get an odd number.",
+      
+      "integers": "Integers are whole numbers that can be positive, negative, or zero. Examples: ..., -3, -2, -1, 0, 1, 2, 3, ... They do not include fractions or decimals. Integers are used for counting, ordering, and measuring discrete quantities.",
+      
+      "rational numbers": "Rational numbers are numbers that can be expressed as a fraction a/b where a and b are integers and b ≠ 0. All integers, fractions, and terminating or repeating decimals are rational numbers. Examples: 1/2, 3, -4, 0.75, 0.333...",
+      
+      "irrational numbers": "Irrational numbers cannot be expressed as a simple fraction. Their decimal representation goes on forever without repeating. Famous examples include π (pi ≈ 3.14159...), √2 (≈ 1.41421...), and e (≈ 2.71828...). These numbers are important in geometry and calculus.",
+      
+      // Algebra
+      "algebra": "Algebra is a branch of mathematics that uses letters and symbols to represent numbers and quantities in formulas and equations. It helps us solve problems by finding unknown values. Key concepts include variables (like x and y), expressions, equations, and functions. Algebra is essential for advanced mathematics and many real-world applications.",
+      
+      "variables": "Variables are symbols (usually letters) that represent unknown or changeable values in mathematical expressions and equations. Common variables include x, y, z, a, b, and c. For example, in the equation 2x + 5 = 13, x is the variable we need to solve for. Variables allow us to write general formulas that work for many different values.",
+      
+      "equations": "An equation is a mathematical statement that shows two expressions are equal, connected by an equals sign (=). For example, 2x + 3 = 7 is an equation. Solving an equation means finding the value(s) of the variable(s) that make the equation true. You solve equations by performing the same operations on both sides to isolate the variable.",
+      
+      "polynomials": "A polynomial is an expression consisting of variables and coefficients combined using addition, subtraction, and multiplication. Examples: 3x + 2, x² - 5x + 6, 4x³ + 2x² - x + 7. The degree of a polynomial is the highest power of the variable. Polynomials are classified as linear (degree 1), quadratic (degree 2), cubic (degree 3), etc.",
+      
+      "exponents": "An exponent (or power) tells you how many times to multiply a number by itself. In x^n, x is the base and n is the exponent. For example, 2³ = 2 × 2 × 2 = 8. Special rules: x⁰ = 1, x¹ = x, x^(-n) = 1/x^n. Exponents are used in scientific notation, compound interest, and exponential growth.",
+      
+      "logarithms": "A logarithm is the inverse operation of exponentiation. If b^y = x, then log_b(x) = y. Common logarithms use base 10 (log), while natural logarithms use base e (ln). Logarithms help solve equations where the unknown is in an exponent. They're used in science for measuring sound (decibels), earthquakes (Richter scale), and pH levels.",
+      
+      "quadratic equations": "A quadratic equation has the form ax² + bx + c = 0, where a ≠ 0. Solutions can be found using: 1) Factoring, 2) Completing the square, or 3) The quadratic formula: x = (-b ± √(b² - 4ac)) / 2a. The discriminant (b² - 4ac) tells us: if positive, two real solutions; if zero, one solution; if negative, no real solutions (two complex solutions).",
+      
+      "functions": "A function is a relation that assigns exactly one output for each input. Written as f(x), where x is the input and f(x) is the output. For example, f(x) = 2x + 1 means you multiply the input by 2 and add 1. Functions are fundamental in mathematics and model relationships between quantities in science, economics, and engineering.",
+      
+      // Geometry
+      "geometry": "Geometry is the branch of mathematics that studies shapes, sizes, positions, and properties of space. It includes points, lines, angles, surfaces, and solids. Geometry has two main branches: plane geometry (2D shapes like circles and triangles) and solid geometry (3D shapes like spheres and cubes). It's essential in architecture, engineering, art, and physics.",
+      
+      "pythagorean theorem": "The Pythagorean theorem states that in a right triangle, the square of the hypotenuse (longest side) equals the sum of squares of the other two sides: a² + b² = c². This theorem, discovered by ancient Greek mathematician Pythagoras, is fundamental in geometry and has countless applications in construction, navigation, computer graphics, and physics.",
+      
+      "angles": "An angle is formed when two rays meet at a common point (vertex). Angles are measured in degrees (°) or radians. Types include: acute (less than 90°), right (exactly 90°), obtuse (between 90° and 180°), straight (180°), and reflex (greater than 180°). The sum of angles in a triangle is always 180°.",
+      
+      "triangles": "A triangle is a polygon with three sides and three angles. Types include: equilateral (all sides equal), isosceles (two sides equal), scalene (no sides equal), right (one 90° angle), acute (all angles less than 90°), and obtuse (one angle greater than 90°). The area of a triangle is (base × height) / 2.",
+      
+      "circles": "A circle is a shape where all points are equidistant from a center point. Key measurements: radius (r) is the distance from center to edge, diameter (d = 2r) is the distance across through the center, circumference (C = 2πr or πd) is the distance around, and area (A = πr²). Circles are fundamental in wheels, gears, orbits, and many natural phenomena.",
+      
+      "pi": "Pi (π) is a mathematical constant approximately equal to 3.14159. It represents the ratio of a circle's circumference to its diameter. This ratio is the same for all circles, regardless of size. π is an irrational number (its decimals never end or repeat). It's used extensively in geometry, trigonometry, physics, and engineering.",
+      
+      "area": "Area measures the size of a 2D surface, expressed in square units (like cm², m², etc.). Common formulas: Rectangle = length × width, Square = side², Triangle = (base × height) / 2, Circle = πr², Trapezoid = ((base₁ + base₂) × height) / 2. Area is used in construction, land measurement, and many practical applications.",
+      
+      "volume": "Volume measures the space occupied by a 3D object, expressed in cubic units (like cm³, m³, etc.). Common formulas: Cube = side³, Rectangular prism = length × width × height, Cylinder = πr²h, Sphere = (4/3)πr³, Cone = (1/3)πr²h. Volume is essential in engineering, chemistry, and everyday measurements.",
+      
+      "perimeter": "Perimeter is the total distance around the outside of a 2D shape. For regular shapes: Rectangle = 2(length + width), Square = 4 × side, Triangle = sum of all three sides. For a circle, the perimeter is called circumference = 2πr. Perimeter is used in fencing, framing, and measuring boundaries.",
+      
+      // Trigonometry
+      "trigonometry": "Trigonometry studies the relationships between angles and sides of triangles. The main functions are sine (sin), cosine (cos), and tangent (tan). In a right triangle: sin(θ) = opposite/hypotenuse, cos(θ) = adjacent/hypotenuse, tan(θ) = opposite/adjacent. Trigonometry is crucial in navigation, engineering, physics, and astronomy.",
+      
+      "sine": "Sine (sin) is a trigonometric function. In a right triangle, sin(angle) = opposite side / hypotenuse. For any angle θ, the sine value ranges from -1 to 1. The sine function creates a wave pattern and is used to model periodic phenomena like sound waves, light waves, and tides.",
+      
+      "cosine": "Cosine (cos) is a trigonometric function. In a right triangle, cos(angle) = adjacent side / hypotenuse. Like sine, cosine values range from -1 to 1. The cosine wave is identical to the sine wave but shifted by 90°. It's used in physics, engineering, and signal processing.",
+      
+      "tangent": "Tangent (tan) is a trigonometric function. In a right triangle, tan(angle) = opposite side / adjacent side, which also equals sin(angle) / cos(angle). Unlike sine and cosine, tangent can have any value from negative to positive infinity. It's used to calculate slopes, angles of elevation, and in calculus.",
+      
+      // Calculus
+      "calculus": "Calculus is the mathematical study of continuous change. It has two main branches: differential calculus (studying rates of change and slopes) and integral calculus (studying accumulation and areas). Invented independently by Newton and Leibniz in the 17th century, calculus is essential in physics, engineering, economics, statistics, and many scientific fields.",
+      
+      "derivatives": "A derivative measures how a function changes as its input changes - it's the rate of change or slope at any point. If f(x) represents position, f'(x) represents velocity. The derivative of x^n is nx^(n-1). Derivatives are used to find maximum and minimum values, optimize processes, and understand motion and change.",
+      
+      "integrals": "An integral is the reverse of a derivative. It represents accumulation or the area under a curve. There are definite integrals (with limits, giving a number) and indefinite integrals (giving a function). Integrals are used to calculate areas, volumes, total distance traveled, and accumulated quantities in physics and engineering.",
+      
+      "limits": "A limit describes the value a function approaches as the input approaches some value. Written as lim(x→a) f(x). Limits are fundamental to calculus and help us understand behavior at points where a function might not be defined. They're used to define derivatives and integrals precisely.",
+      
+      // Statistics & Probability
+      "statistics": "Statistics is the science of collecting, analyzing, interpreting, and presenting data. Key concepts include mean (average), median (middle value), mode (most frequent value), range, and standard deviation. Statistics helps us understand patterns, make predictions, and make informed decisions in science, business, medicine, and social sciences.",
+      
+      "mean": "The mean (or average) is calculated by adding all values and dividing by the number of values. For example, the mean of 2, 4, 6, 8, 10 is (2+4+6+8+10)/5 = 30/5 = 6. The mean represents the central tendency of data and is sensitive to outliers (extreme values).",
+      
+      "median": "The median is the middle value when data is arranged in order. For odd-sized datasets, it's the middle number. For even-sized datasets, it's the average of the two middle numbers. Unlike the mean, the median is not affected by extreme values, making it useful for skewed data like income levels.",
+      
+      "mode": "The mode is the value that appears most frequently in a dataset. A dataset can have one mode (unimodal), multiple modes (bimodal or multimodal), or no mode at all. For example, in the set {2, 3, 3, 5, 7, 7, 7, 9}, the mode is 7. The mode is useful for categorical data.",
+      
+      "probability": "Probability measures the likelihood of an event occurring, expressed as a number between 0 (impossible) and 1 (certain), or as a percentage. Basic probability = (favorable outcomes) / (total possible outcomes). For example, the probability of rolling a 6 on a fair die is 1/6 ≈ 0.167 or about 16.7%.",
+      
+      // Number Theory
+      "factors": "Factors are numbers that divide evenly into another number. For example, the factors of 12 are 1, 2, 3, 4, 6, and 12. Every number has at least two factors: 1 and itself. Prime numbers have exactly two factors. Finding factors is important in simplifying fractions and solving certain equations.",
+      
+      "multiples": "A multiple of a number is the product of that number and any integer. For example, multiples of 3 are 3, 6, 9, 12, 15, etc. Every number has infinite multiples. The least common multiple (LCM) of two numbers is the smallest number that is a multiple of both.",
+      
+      "greatest common divisor": "The greatest common divisor (GCD), also called greatest common factor (GCF), is the largest number that divides two or more numbers evenly. For example, the GCD of 12 and 18 is 6. Finding the GCD is useful for simplifying fractions and solving problems involving division.",
+      
+      "fibonacci sequence": "The Fibonacci sequence is a series where each number is the sum of the two preceding ones: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ... This sequence appears in nature (flower petals, pinecones, shells), art, and architecture. The ratio of consecutive Fibonacci numbers approaches the golden ratio (φ ≈ 1.618).",
+      
+      "perfect squares": "A perfect square is a number that can be expressed as the product of an integer with itself. Examples: 1 (1×1), 4 (2×2), 9 (3×3), 16 (4×4), 25 (5×5), etc. The square root of a perfect square is always an integer. Perfect squares are important in geometry and algebra.",
+      
+      "composite numbers": "Composite numbers are positive integers greater than 1 that have more than two factors. In other words, they can be divided evenly by numbers other than 1 and themselves. Examples: 4, 6, 8, 9, 10, 12, etc. Every composite number can be expressed as a product of prime numbers (prime factorization).",
+      
+      // Advanced Topics
+      "matrices": "A matrix is a rectangular array of numbers arranged in rows and columns. Matrices are used to represent and solve systems of linear equations, transform graphics in computer games, analyze networks, and process data in machine learning. Matrix operations include addition, multiplication, and finding determinants and inverses.",
+      
+      "complex numbers": "Complex numbers have the form a + bi, where a and b are real numbers and i is the imaginary unit (i² = -1). They extend the real number system and are essential in advanced mathematics, electrical engineering, quantum mechanics, and signal processing. Every polynomial equation has solutions in complex numbers.",
+      
+      "vectors": "A vector is a quantity with both magnitude (size) and direction. Vectors are represented as arrows or as ordered lists of numbers. They're used in physics (force, velocity, acceleration), computer graphics (3D modeling), and engineering. Vector operations include addition, scalar multiplication, dot product, and cross product.",
+      
+      "series": "A series is the sum of the terms of a sequence. An arithmetic series has a constant difference between terms (e.g., 2, 5, 8, 11, ...). A geometric series has a constant ratio between terms (e.g., 2, 6, 18, 54, ...). Series are used in finance (compound interest), physics, and calculus (approximating functions).",
+      
+      // Operations
+      "addition": "Addition combines numbers to find their total or sum. Symbol: +. It's commutative (a+b = b+a) and associative ((a+b)+c = a+(b+c)). Adding zero doesn't change a number (identity property). Addition is one of the four basic arithmetic operations and represents combining quantities.",
+      
+      "subtraction": "Subtraction finds the difference between two numbers. Symbol: −. It's the inverse of addition. Unlike addition, subtraction is neither commutative nor associative. Subtracting zero leaves a number unchanged. Subtraction represents taking away, comparing, or finding what's left.",
+      
+      "multiplication": "Multiplication is repeated addition. Symbol: × or ·. For example, 3 × 4 = 4 + 4 + 4 = 12. It's commutative (a×b = b×a) and associative. Multiplying by 1 doesn't change a number (identity property). Multiplying by 0 always gives 0. Multiplication represents scaling, grouping, or finding area.",
+      
+      "division": "Division splits a number into equal parts. Symbol: ÷ or /. It's the inverse of multiplication. Division by zero is undefined (impossible). When you divide, the result might be a whole number, fraction, or decimal. Division represents sharing, grouping, or finding how many times one number fits into another.",
+      
+      "order of operations": "The order of operations (PEMDAS/BODMAS) tells us which calculations to do first: 1) Parentheses/Brackets, 2) Exponents/Orders, 3) Multiplication and Division (left to right), 4) Addition and Subtraction (left to right). For example, 2 + 3 × 4 = 2 + 12 = 14, not 20.",
+      
+      "absolute value": "The absolute value of a number is its distance from zero, always positive or zero. Symbol: |x|. For example, |5| = 5 and |-5| = 5. Absolute value removes the negative sign. It's used to measure distance, error, and magnitude regardless of direction.",
+      
+      "square root": "A square root of a number x is a value that, when multiplied by itself, gives x. Symbol: √. For example, √16 = 4 because 4 × 4 = 16. Every positive number has two square roots: one positive (principal root) and one negative. Square roots are inverse operations of squaring.",
+      
+      "powers": "A power (or exponent) indicates repeated multiplication. In a^n, a is the base and n is the exponent/power. For example, 2^4 = 2×2×2×2 = 16. Special cases: a^1 = a, a^0 = 1 (for a ≠ 0), a^(-n) = 1/a^n. Powers are used in scientific notation, growth models, and computer science."
+    };
+
+    async function askChatGPT(question, isCalculation = false) {
+      try {
+        showLoading();
+        
+        let response = '';
+        
+        if (isCalculation) {
+          // Handle calculation explanations
+          response = explainCalculation(question);
+        } else {
+          // Handle general math questions
+          response = answerMathQuestion(question);
+        }
+        
+        // Add to conversation history for context
+        conversationHistory.push({
+          role: "user",
+          content: question
+        });
+        conversationHistory.push({
+          role: "assistant",
+          content: response
+        });
+        
+        // Keep history manageable
+        if (conversationHistory.length > 12) {
+          conversationHistory = conversationHistory.slice(-12);
+        }
+        
+        setTimeout(() => {
+          removeLoading();
+          addMessage(response, false);
+        }, 600);
+        
+      } catch (error) {
+        console.error("Error:", error);
+        removeLoading();
+        addMessage("I'm here to help with math! Try asking about concepts like prime numbers, fractions, calculus, or any other math topic.", false);
+      }
+    }
+    
+    function answerMathQuestion(question) {
+      const q = question.toLowerCase().trim();
+      
+      // Remove common question words to get key terms
+      const cleanQ = q.replace(/^(what|explain|tell me about|describe|define|how does|how do|what are|what is)\s+/i, '')
+                       .replace(/\?/g, '')
+                       .trim();
+      
+      // Check for exact matches first
+      if (mathKnowledge[cleanQ]) {
+        return mathKnowledge[cleanQ];
+      }
+      
+      // Check for partial matches
+      for (let [key, value] of Object.entries(mathKnowledge)) {
+        if (cleanQ.includes(key) || key.includes(cleanQ)) {
+          return value;
+        }
+      }
+      
+      // Handle specific patterns
+      if (q.includes('prime') && q.includes('number')) {
+        return mathKnowledge["prime numbers"];
+      }
+      if (q.includes('fraction')) {
+        return mathKnowledge["fractions"];
+      }
+      if (q.includes('percent') || q.includes('%')) {
+        return mathKnowledge["percentages"];
+      }
+      if (q.includes('calculus')) {
+        return mathKnowledge["calculus"];
+      }
+      if (q.includes('derivative')) {
+        return mathKnowledge["derivatives"];
+      }
+      if (q.includes('integral')) {
+        return mathKnowledge["integrals"];
+      }
+      if (q.includes('triangle')) {
+        return mathKnowledge["triangles"];
+      }
+      if (q.includes('circle')) {
+        return mathKnowledge["circles"];
+      }
+      if (q.includes('pythagorean')) {
+        return mathKnowledge["pythagorean theorem"];
+      }
+      if (q.includes('algebra')) {
+        return mathKnowledge["algebra"];
+      }
+      if (q.includes('geometry')) {
+        return mathKnowledge["geometry"];
+      }
+      if (q.includes('statistics') || q.includes('stats')) {
+        return mathKnowledge["statistics"];
+      }
+      if (q.includes('probability')) {
+        return mathKnowledge["probability"];
+      }
+      if (q.includes('trigonometry') || q.includes('trig')) {
+        return mathKnowledge["trigonometry"];
+      }
+      if (q.includes('mean') || q.includes('average')) {
+        return mathKnowledge["mean"];
+      }
+      if (q.includes('median')) {
+        return mathKnowledge["median"];
+      }
+      if (q.includes('mode')) {
+        return mathKnowledge["mode"];
+      }
+      if (q.includes('add') || q.includes('addition') || q.includes('sum')) {
+        return mathKnowledge["addition"];
+      }
+      if (q.includes('subtract') || q.includes('subtraction') || q.includes('difference')) {
+        return mathKnowledge["subtraction"];
+      }
+      if (q.includes('multiply') || q.includes('multiplication') || q.includes('product') || q.includes('times')) {
+        return mathKnowledge["multiplication"];
+      }
+      if (q.includes('divide') || q.includes('division') || q.includes('quotient')) {
+        return mathKnowledge["division"];
+      }
+      if (q.includes('square root') || q.includes('sqrt')) {
+        return mathKnowledge["square root"];
+      }
+      if (q.includes('exponent') || q.includes('power')) {
+        return mathKnowledge["exponents"];
+      }
+      if (q.includes('equation')) {
+        return mathKnowledge["equations"];
+      }
+      if (q.includes('variable')) {
+        return mathKnowledge["variables"];
+      }
+      if (q.includes('function')) {
+        return mathKnowledge["functions"];
+      }
+      if (q.includes('factor')) {
+        return mathKnowledge["factors"];
+      }
+      if (q.includes('multiple')) {
+        return mathKnowledge["multiples"];
+      }
+      if (q.includes('fibonacci')) {
+        return mathKnowledge["fibonacci sequence"];
+      }
+      if (q.includes('matrix') || q.includes('matrices')) {
+        return mathKnowledge["matrices"];
+      }
+      if (q.includes('vector')) {
+        return mathKnowledge["vectors"];
+      }
+      if (q.includes('complex number')) {
+        return mathKnowledge["complex numbers"];
+      }
+      if (q.includes('logarithm') || q.includes('log')) {
+        return mathKnowledge["logarithms"];
+      }
+      if (q.includes('sin') && !q.includes('using') && !q.includes('cosine')) {
+        return mathKnowledge["sine"];
+      }
+      if (q.includes('cos')) {
+        return mathKnowledge["cosine"];
+      }
+      if (q.includes('tan') && !q.includes('constant')) {
+        return mathKnowledge["tangent"];
+      }
+      if (q.includes('area')) {
+        return mathKnowledge["area"];
+      }
+      if (q.includes('volume')) {
+        return mathKnowledge["volume"];
+      }
+      if (q.includes('perimeter')) {
+        return mathKnowledge["perimeter"];
+      }
+      if (q.includes('angle')) {
+        return mathKnowledge["angles"];
+      }
+      if (q.includes('integer')) {
+        return mathKnowledge["integers"];
+      }
+      if (q.includes('rational')) {
+        return mathKnowledge["rational numbers"];
+      }
+      if (q.includes('irrational')) {
+        return mathKnowledge["irrational numbers"];
+      }
+      if (q.includes('even') && q.includes('number')) {
+        return mathKnowledge["even numbers"];
+      }
+      if (q.includes('odd') && q.includes('number')) {
+        return mathKnowledge["odd numbers"];
+      }
+      if (q.includes('decimal')) {
+        return mathKnowledge["decimals"];
+      }
+      if (q.includes('polynomial')) {
+        return mathKnowledge["polynomials"];
+      }
+      if (q.includes('quadratic')) {
+        return mathKnowledge["quadratic equations"];
+      }
+      if (q.includes('limit')) {
+        return mathKnowledge["limits"];
+      }
+      if (q.includes('series')) {
+        return mathKnowledge["series"];
+      }
+      if (q.includes('absolute value')) {
+        return mathKnowledge["absolute value"];
+      }
+      if (q.includes('order of operations') || q.includes('pemdas') || q.includes('bodmas')) {
+        return mathKnowledge["order of operations"];
+      }
+      if (q.includes('gcd') || q.includes('greatest common')) {
+        return mathKnowledge["greatest common divisor"];
+      }
+      if (q.includes('perfect square')) {
+        return mathKnowledge["perfect squares"];
+      }
+      if (q.includes('composite')) {
+        return mathKnowledge["composite numbers"];
+      }
+      if (q.includes('pi') || q.includes('π')) {
+        return mathKnowledge["pi"];
+      }
+      
+      // Generic helpful response
+      return `Great question! I can help you with many math topics including:\n\n📊 Basic Math: prime numbers, fractions, decimals, percentages\n📐 Geometry: triangles, circles, area, volume, Pythagorean theorem\n🔢 Algebra: equations, variables, polynomials, exponents\n📈 Calculus: derivatives, integrals, limits\n📉 Statistics: mean, median, mode, probability\n➕ Operations: addition, subtraction, multiplication, division\n\nTry asking something like "What are prime numbers?" or "Explain the Pythagorean theorem"`;
+    }
+    
+    function explainCalculation(calculation) {
+      // Extract calculation details
+      const match = calculation.match(/(\d+\.?\d*)\s*([+\-×÷])\s*(\d+\.?\d*)\s*=\s*(\d+\.?\d*)/);
+      
+      if (match) {
+        const [_, num1, op, num2, result] = match;
+        const operations = {
+          '+': 'addition',
+          '−': 'subtraction',
+          '×': 'multiplication',
+          '÷': 'division'
+        };
+        
+        let explanation = `Great! You performed ${operations[op]}. `;
+        
+        if (op === '+') {
+          explanation += `When you add ${num1} and ${num2}, you get ${result}. Addition combines two numbers to find their total sum. It's one of the four basic arithmetic operations and represents combining quantities together.`;
+        } else if (op === '−') {
+          explanation += `When you subtract ${num2} from ${num1}, you get ${result}. Subtraction finds the difference between two numbers and tells you how much is left or how much more one number is than another.`;
+        } else if (op === '×') {
+          explanation += `When you multiply ${num1} by ${num2}, you get ${result}. Multiplication is repeated addition - it's like adding ${num1} to itself ${num2} times, which gives us ${result}.`;
+        } else if (op === '÷') {
+          explanation += `When you divide ${num1} by ${num2}, you get ${result}. Division splits a number into equal parts. Here, we're finding how many groups of ${num2} fit into ${num1}, which is ${result}.`;
+        }
+        
+        return explanation;
+      }
+      
+      // Handle special functions
+      if (calculation.includes('√')) {
+        return `You calculated a square root! The square root finds a number that, when multiplied by itself, gives the original number. Square roots are the inverse operation of squaring a number.`;
+      }
+      if (calculation.includes('²')) {
+        return `You squared a number! Squaring means multiplying a number by itself. It's used in many formulas, especially in geometry for calculating areas.`;
+      }
+      if (calculation.includes('%')) {
+        return `You calculated a percentage! Percentages express numbers as parts of 100. They're useful for comparing proportions, calculating discounts, interest rates, and statistics.`;
+      }
+      if (calculation.includes('1/')) {
+        return `You calculated a reciprocal! The reciprocal of a number is 1 divided by that number. Reciprocals are useful in division and fraction operations.`;
+      }
+      
+      return `You calculated: ${calculation}. Great job using the calculator!`;
+    }
 
     const displayEl = document.getElementById('display');
     const historyEl = document.getElementById('history');
