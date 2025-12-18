@@ -274,11 +274,52 @@
       cursor: pointer;
       padding-bottom: 2px;
       color: #666;
+      transition: all 0.3s;
+    }
+
+    .tab:hover {
+      color: #dc6bba;
     }
 
     .tab.active {
       border-bottom: 3px solid #dc6bba;
       color: #333;
+    }
+
+    .calc-content {
+      display: none;
+    }
+
+    .calc-content.active {
+      display: block;
+    }
+
+    .memory-display {
+      padding: 20px 16px;
+      background: #fafafa;
+      min-height: 400px;
+    }
+
+    .memory-display h3 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .memory-item {
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border-left: 4px solid #dc6bba;
+      font-size: 18px;
+    }
+
+    .no-memory {
+      color: #888;
+      text-align: center;
+      margin-top: 50px;
+      font-size: 14px;
     }
 
     .display-area {
@@ -407,22 +448,33 @@
     <div class="header">
       <div class="mode">Standard</div>
       <div class="tabs">
-        <div class="tab active">History</div>
-        <div class="tab">Memory</div>
+        <div class="tab calc-tab active" data-calc-tab="history">History</div>
+        <div class="tab calc-tab" data-calc-tab="memory">Memory</div>
       </div>
     </div>
 
-    <div class="display-area">
-      <div class="history-text" id="history">&nbsp;</div>
-      <input type="text" class="display" id="display" value="0" readonly>
+    <div class="calc-content active" id="historyView">
+      <div class="display-area">
+        <div class="history-text" id="history">&nbsp;</div>
+        <input type="text" class="display" id="display" value="0" readonly>
+      </div>
+
+      <div class="memory-buttons">
+        <button class="memory-btn" id="mc">MC</button>
+        <button class="memory-btn" id="mr">MR</button>
+        <button class="memory-btn" id="mAdd">M+</button>
+        <button class="memory-btn" id="mSub">M−</button>
+        <button class="memory-btn" id="ms">MS</button>
+      </div>
     </div>
 
-    <div class="memory-buttons">
-      <button class="memory-btn" id="mc">MC</button>
-      <button class="memory-btn" id="mr">MR</button>
-      <button class="memory-btn" id="mAdd">M+</button>
-      <button class="memory-btn" id="mSub">M−</button>
-      <button class="memory-btn" id="ms">MS</button>
+    <div class="calc-content" id="memoryView">
+      <div class="memory-display">
+        <h3>Memory</h3>
+        <div id="memoryList">
+          <div class="no-memory">No memory stored</div>
+        </div>
+      </div>
     </div>
 
     <div class="buttons">
@@ -518,6 +570,31 @@
       const equationInput = document.getElementById('equationInput');
       const solveBtn = document.getElementById('solveBtn');
       const solutionContent = document.getElementById('solutionContent');
+      const memoryList = document.getElementById('memoryList');
+
+      // Calculator tab switching
+      document.querySelectorAll('.calc-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.calc-content').forEach(c => c.classList.remove('active'));
+          
+          this.classList.add('active');
+          const tabName = this.dataset.calcTab;
+          document.getElementById(tabName + 'View').classList.add('active');
+          
+          if (tabName === 'memory') {
+            updateMemoryDisplay();
+          }
+        });
+      });
+
+      function updateMemoryDisplay() {
+        if (memoryVal === 0) {
+          memoryList.innerHTML = '<div class="no-memory">No memory stored</div>';
+        } else {
+          memoryList.innerHTML = `<div class="memory-item">M = ${memoryVal}</div>`;
+        }
+      }
 
       // Tab switching
       document.querySelectorAll('.panel-tab').forEach(tab => {
@@ -838,19 +915,25 @@ Format your response clearly with line breaks between steps.`
       document.getElementById('sqrt').onclick = () => performFunction('SQRT');
       document.getElementById('negate').onclick = () => performFunction('NEGATE');
 
-      document.getElementById('mc').onclick = () => { memoryVal = 0; };
+      document.getElementById('mc').onclick = () => { 
+        memoryVal = 0;
+        updateMemoryDisplay();
+      };
       document.getElementById('mr').onclick = () => {
         setDisplay(String(memoryVal));
         waitingForOperand = true;
       };
       document.getElementById('ms').onclick = () => {
         memoryVal = parseFloat(currentVal);
+        updateMemoryDisplay();
       };
       document.getElementById('mAdd').onclick = () => {
         memoryVal += parseFloat(currentVal);
+        updateMemoryDisplay();
       };
       document.getElementById('mSub').onclick = () => {
         memoryVal -= parseFloat(currentVal);
+        updateMemoryDisplay();
       };
 
       document.addEventListener('keydown', function(e) {
