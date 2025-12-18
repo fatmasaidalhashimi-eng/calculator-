@@ -3,170 +3,1114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Math Assistant - Complete Knowledge Base</title>
+  <title>Calculator with Claude AI & History</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-    body { background: #fff6fe; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px; gap: 20px; flex-wrap: wrap; }
-    
-    /* Calculator UI */
-    .calculator { background: #fff; width: 320px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
-    .display-area { padding: 20px; background: #fafafa; text-align: right; border-bottom: 1px solid #eee; }
-    #history-display { font-size: 14px; color: #888; height: 20px; margin-bottom: 5px; }
-    #main-display { font-size: 40px; font-weight: 600; width: 100%; border: none; text-align: right; background: transparent; outline: none; }
-    
-    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #eee; }
-    button { height: 60px; border: none; background: #fff; font-size: 18px; cursor: pointer; transition: 0.2s; }
-    button:hover { background: #fdf2fb; }
-    .operator { background: #dc6bba; color: white; font-size: 22px; }
-    .equal { background: #a34582; color: white; font-weight: bold; }
-    
-    /* Side Panel */
-    .side-panel { width: 420px; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: 650px; }
-    .tabs { display: flex; background: #f5f5f5; border-bottom: 2px solid #dc6bba; }
-    .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; color: #666; }
-    .tab.active { background: #fff; color: #dc6bba; }
-    
-    .content { flex: 1; padding: 20px; overflow-y: auto; display: none; }
-    .content.active { display: flex; flex-direction: column; }
-    
-    /* AI Chat */
-    .chat-container { flex: 1; overflow-y: auto; background: #fafafa; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; }
-    .chat-msg { padding: 12px; border-radius: 12px; font-size: 14px; max-width: 90%; line-height: 1.5; }
-    .ai { background: #fcdcf9; color: #333; align-self: flex-start; }
-    .user { background: #dc6bba; color: white; align-self: flex-end; }
-    
-    .input-row { display: flex; gap: 10px; margin-top: 15px; }
-    input[type="text"] { flex: 1; padding: 12px; border: 2px solid #dc6bba; border-radius: 8px; outline: none; }
-    .send-btn { background: #dc6bba; color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    
-    strong { color: #a34582; }
-    code { background: #eee; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff6fe;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .calculator {
+      background: #ffffff;
+      width: 100%;
+      max-width: 320px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .side-panel {
+      background: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .panel-tabs {
+      display: flex;
+      background: #f0f0f0;
+      border-bottom: 2px solid #dc6bba;
+    }
+
+    .panel-tab {
+      flex: 1;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #666;
+      transition: all 0.3s;
+    }
+
+    .panel-tab.active {
+      background: #ffffff;
+      color: #dc6bba;
+    }
+
+    .panel-content {
+      display: none;
+      padding: 20px;
+      height: 600px;
+      overflow-y: auto;
+    }
+
+    .panel-content.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #fafafa;
+      border-radius: 8px;
+      min-height: 400px;
+    }
+
+    .message {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 85%;
+      word-wrap: break-word;
+      line-height: 1.5;
+    }
+
+    .user-message {
+      background: #dc6bba;
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .ai-message {
+      background: #fcdcf9;
+      color: #333;
+    }
+
+    .loading {
+      background: #fcdcf9;
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 85%;
+      font-style: italic;
+      color: #666;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+    }
+
+    .ai-input {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #dc6bba;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Segoe UI', sans-serif;
+      outline: none;
+    }
+
+    .ai-input:focus {
+      border-color: #a34582;
+    }
+
+    .send-btn {
+      padding: 12px 16px;
+      background: #dc6bba;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .send-btn:hover {
+      background: #c95aa7;
+    }
+
+    .send-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .equation-solver {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .equation-input-section {
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .equation-input-section h3 {
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .equation-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dc6bba;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: 'Courier New', monospace;
+      outline: none;
+    }
+
+    .equation-examples {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .equation-examples div {
+      margin-top: 5px;
+    }
+
+    .solve-btn {
+      width: 100%;
+      padding: 15px;
+      background: #a34582;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .solve-btn:hover {
+      background: #8f3b71;
+    }
+
+    .solve-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .solution-area {
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 8px;
+      min-height: 200px;
+    }
+
+    .solution-area h3 {
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .solution-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+      white-space: pre-wrap;
+    }
+
+    .combined-history {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .history-section {
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .history-section h3 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .clear-btn {
+      background: #dc6bba;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: #c95aa7;
+    }
+
+    .history-item, .memory-item {
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border-left: 4px solid #dc6bba;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .history-item:hover, .memory-item:hover {
+      background: #ffe6fc;
+      transform: translateX(5px);
+    }
+
+    .history-expression {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .history-result {
+      font-size: 20px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .no-history, .no-memory {
+      color: #888;
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    .header {
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mode {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .history-toggle {
+      background: #dc6bba;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .history-toggle:hover {
+      background: #c95aa7;
+    }
+
+    .display-area {
+      padding: 20px 16px;
+      text-align: right;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: #fafafa;
+    }
+
+    .history-text {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 8px;
+      min-height: 20px;
+    }
+
+    .display {
+      background: transparent;
+      border: none;
+      color: #000;
+      font-size: 48px;
+      font-weight: 600;
+      text-align: right;
+      width: 100%;
+      outline: none;
+    }
+
+    .memory-buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      padding: 8px 0;
+      background: #f0f0f0;
+    }
+
+    .memory-btn {
+      background: #ffffff;
+      border: none;
+      color: #666;
+      font-size: 13px;
+      padding: 10px;
+      cursor: pointer;
+      font-family: 'Segoe UI', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .memory-btn:hover {
+      background: #ffe6fc;
+      color: #dc6bba;
+    }
+
+    .memory-btn:active {
+      background: #fcdcf9;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      padding: 0;
+      background: #e0e0e0;
+    }
+
+    button {
+      height: 60px;
+      font-size: 20px;
+      border: none;
+      cursor: pointer;
+      background: #fcdcf9;
+      color: #000;
+      font-family: 'Segoe UI', sans-serif;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    button:hover {
+      filter: brightness(0.95);
+    }
+
+    button:active {
+      filter: brightness(0.85);
+      transform: scale(0.98);
+    }
+
+    button.function {
+      background: #fcdcf9;
+      color: #000;
+      font-size: 18px;
+    }
+
+    button.operator {
+      background: #dc6bba;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    button.number {
+      background: #fcdcf9;
+      font-size: 24px;
+    }
+
+    button.equal {
+      background: #a34582;
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      
+      .calculator, .side-panel {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-
   <div class="calculator">
-    <div class="display-area">
-      <div id="history-display"></div>
-      <input type="text" id="main-display" value="0" readonly>
+    <div class="header">
+      <div class="mode">Standard</div>
+      <button class="history-toggle" id="historyToggle">💾 Memory</button>
     </div>
+
+    <div class="display-area">
+      <div class="history-text" id="history">&nbsp;</div>
+      <input type="text" class="display" id="display" value="0" readonly>
+    </div>
+
+    <div class="memory-buttons">
+      <button class="memory-btn" id="mc">MC</button>
+      <button class="memory-btn" id="mr">MR</button>
+      <button class="memory-btn" id="mAdd">M+</button>
+      <button class="memory-btn" id="mSub">M−</button>
+      <button class="memory-btn" id="ms">MS</button>
+    </div>
+
     <div class="buttons">
-      <button onclick="clearDisplay()">C</button>
-      <button onclick="deleteLast()">⌫</button>
-      <button onclick="appendOp('/')" class="operator">÷</button>
-      <button onclick="appendOp('*')" class="operator">×</button>
-      <button onclick="appendNum('7')">7</button><button onclick="appendNum('8')">8</button><button onclick="appendNum('9')">9</button><button onclick="appendOp('-')" class="operator">−</button>
-      <button onclick="appendNum('4')">4</button><button onclick="appendNum('5')">5</button><button onclick="appendNum('6')">6</button><button onclick="appendOp('+')" class="operator">+</button>
-      <button onclick="appendNum('1')">1</button><button onclick="appendNum('2')">2</button><button onclick="appendNum('3')">3</button><button onclick="calculate()" class="equal" style="grid-row: span 2">=</button>
-      <button onclick="appendNum('0')" style="grid-column: span 2">0</button><button onclick="appendNum('.')">.</button>
+      <button class="function" id="percent">%</button>
+      <button class="function" id="ce">CE</button>
+      <button class="function" id="clear">C</button>
+      <button class="function" id="back">⌫</button>
+
+      <button class="function" id="recip">¹⁄ₓ</button>
+      <button class="function" id="square">x²</button>
+      <button class="function" id="sqrt">²√x</button>
+      <button class="operator" id="divide">÷</button>
+
+      <button class="number" id="n7">7</button>
+      <button class="number" id="n8">8</button>
+      <button class="number" id="n9">9</button>
+      <button class="operator" id="multiply">×</button>
+
+      <button class="number" id="n4">4</button>
+      <button class="number" id="n5">5</button>
+      <button class="number" id="n6">6</button>
+      <button class="operator" id="subtract">−</button>
+
+      <button class="number" id="n1">1</button>
+      <button class="number" id="n2">2</button>
+      <button class="number" id="n3">3</button>
+      <button class="operator" id="add">+</button>
+
+      <button class="function" id="negate">+/−</button>
+      <button class="number" id="n0">0</button>
+      <button class="number" id="decimal">.</button>
+      <button class="equal" id="equals">=</button>
     </div>
   </div>
 
   <div class="side-panel">
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('ai-tab')">💬 Math AI</div>
-      <div class="tab" onclick="switchTab('history-tab')">📋 History</div>
+    <div class="panel-tabs">
+      <div class="panel-tab active" data-tab="chatgpt">💬 AI Assistant</div>
+      <div class="panel-tab" data-tab="equation">📐 Equations</div>
+      <div class="panel-tab" data-tab="history">📋 History</div>
     </div>
-    <div id="ai-tab" class="content active">
-      <div class="chat-container" id="chat-box">
-        <div class="chat-msg ai"><strong>Welcome!</strong> I have a complete library of math knowledge built-in. Ask me about:
-          <br>• Prime Numbers
-          <br>• Fractions/Decimals
-          <br>• Geometry (Area/Volume)
-          <br>• Algebra (PEMDAS/Theorems)
+
+    <div class="panel-content active" id="chatgptPanel">
+      <div class="chat-area" id="chatArea">
+        <div class="message ai-message">
+          <strong>👋 Hi! I'm Claude, your AI math assistant.</strong>
+          <p style="margin-top: 8px; font-size: 14px;">I can help you with:</p>
+          <ul style="margin-top: 5px; margin-left: 20px; font-size: 13px;">
+            <li>Explaining your calculations step-by-step</li>
+            <li>Solving complex math problems</li>
+            <li>Teaching mathematical concepts</li>
+            <li>Checking your work</li>
+          </ul>
+          <p style="margin-top: 8px; font-size: 13px; color: #666;">Just perform a calculation and I'll automatically explain it, or ask me anything!</p>
         </div>
       </div>
-      <div class="input-row">
-        <input type="text" id="ai-input" placeholder="Explain prime numbers...">
-        <button class="send-btn" onclick="handleAI()">Ask</button>
+      <div class="input-area">
+        <input type="text" id="aiInput" class="ai-input" placeholder="Ask me anything about math..." />
+        <button class="send-btn" id="sendBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+          </svg>
+        </button>
       </div>
     </div>
-    <div id="history-tab" class="content">
-      <div id="history-list">No calculations yet.</div>
+
+    <div class="panel-content" id="equationPanel">
+      <div class="equation-solver">
+        <div class="equation-input-section">
+          <h3>Enter Your Equation:</h3>
+          <input type="text" id="equationInput" class="equation-input" placeholder="Example: 2x + 5 = 13" />
+          <div class="equation-examples">
+            <strong>Examples:</strong>
+            <div>• Linear: 2x + 5 = 13</div>
+            <div>• Quadratic: x^2 - 5x + 6 = 0</div>
+            <div>• Multiple variables: 2x + 3y = 12 and x - y = 1</div>
+          </div>
+        </div>
+
+        <button class="solve-btn" id="solveBtn">Solve with AI</button>
+
+        <div class="solution-area">
+          <h3>Solution:</h3>
+          <div class="solution-content" id="solutionContent">
+            Enter an equation above and click "Solve with AI" to see the step-by-step solution!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-content" id="historyPanel">
+      <div class="combined-history">
+        <div class="history-section">
+          <h3>
+            Calculation History
+            <button class="clear-btn" id="clearHistoryBtn">Clear</button>
+          </h3>
+          <div id="historyList">
+            <div class="no-history">No calculations yet</div>
+          </div>
+        </div>
+
+        <div class="history-section">
+          <h3>
+            Memory
+            <button class="clear-btn" id="clearMemoryBtn">Clear</button>
+          </h3>
+          <div id="memoryList">
+            <div class="no-memory">No memory stored</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    const mainDisplay = document.getElementById('main-display');
-    const histDisplay = document.getElementById('history-display');
-    let historyEntries = [];
+    let currentVal = '0';
+    let previousVal = null;
+    let operator = null;
+    let waitingForOperand = false;
+    let memoryVal = 0;
+    let lastCalculation = '';
+    let calculationHistory = [];
+    let conversationHistory = [];
 
-    // --- CALCULATOR ENGINE ---
-    function appendNum(n) { mainDisplay.value === '0' ? mainDisplay.value = n : mainDisplay.value += n; }
-    function appendOp(op) {
-      const last = mainDisplay.value.slice(-1);
-      if (['+','-','*','/'].includes(last)) mainDisplay.value = mainDisplay.value.slice(0, -1) + op;
-      else mainDisplay.value += op;
-    }
-    function clearDisplay() { mainDisplay.value = '0'; histDisplay.innerText = ''; }
-    function deleteLast() { mainDisplay.value = mainDisplay.value.slice(0, -1) || '0'; }
-    function calculate() {
-      try {
-        const res = eval(mainDisplay.value);
-        const entry = `${mainDisplay.value} = ${res}`;
-        historyEntries.push(entry);
-        histDisplay.innerText = mainDisplay.value + ' =';
-        mainDisplay.value = res;
-        updateHistoryUI();
-      } catch { mainDisplay.value = "Error"; }
-    }
-    function updateHistoryUI() {
-      document.getElementById('history-list').innerHTML = historyEntries.map(item => `<div style="padding:12px; border-bottom:1px solid #eee; background:#fff;">${item}</div>`).reverse().join('');
-    }
+    const displayEl = document.getElementById('display');
+    const historyEl = document.getElementById('history');
+    const chatArea = document.getElementById('chatArea');
+    const aiInput = document.getElementById('aiInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const equationInput = document.getElementById('equationInput');
+    const solveBtn = document.getElementById('solveBtn');
+    const solutionContent = document.getElementById('solutionContent');
+    const memoryList = document.getElementById('memoryList');
+    const historyList = document.getElementById('historyList');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const clearMemoryBtn = document.getElementById('clearMemoryBtn');
+    const historyToggle = document.getElementById('historyToggle');
 
-    // --- THE MATHEMATICAL KNOWLEDGE ENGINE ---
-    function switchTab(id) {
-      document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      event.currentTarget.classList.add('active');
-    }
-
-    function addMessage(text, sender) {
-      const msg = document.createElement('div');
-      msg.className = `chat-msg ${sender}`;
-      msg.innerHTML = text;
-      document.getElementById('chat-box').appendChild(msg);
-      document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
-    }
-
-    function handleAI() {
-      const input = document.getElementById('ai-input');
-      const query = input.value.trim().toLowerCase();
-      if (!query) return;
-
-      addMessage(input.value, 'user');
-      input.value = '';
-
-      setTimeout(() => {
-        let response = "";
-
-        // Knowledge Matching
-        if (query.includes("prime")) {
-          response = "<strong>Prime Numbers:</strong> Numbers greater than 1 that only have two factors: 1 and themselves. 2 is the only even prime! <br><em>Examples: 2, 3, 5, 7, 11, 13, 17...</em>";
-        } else if (query.includes("pi")) {
-          response = "<strong>Pi (π):</strong> The ratio of a circle's circumference to its diameter. It is an irrational number approximately equal to <strong>3.14159</strong>.";
-        } else if (query.includes("pythagorean")) {
-          response = "<strong>Pythagorean Theorem:</strong> In a right triangle, <code>a² + b² = c²</code>. Where 'c' is the longest side (hypotenuse).";
-        } else if (query.includes("pemdas") || query.includes("order of operations")) {
-          response = "<strong>PEMDAS:</strong> The order to solve math: <br>1. Parentheses <br>2. Exponents <br>3. Mult/Div (left to right) <br>4. Add/Sub (left to right).";
-        } else if (query.includes("fraction")) {
-          response = "<strong>Fractions:</strong> Parts of a whole. The top (numerator) is how many parts you have; the bottom (denominator) is the total parts.";
-        } else if (query.includes("area")) {
-          response = "<strong>Area Formulas:</strong> <br>• Rectangle: <code>Length × Width</code> <br>• Triangle: <code>½ × Base × Height</code> <br>• Circle: <code>π × r²</code>";
-        } else if (query.includes("decimal")) {
-          response = "<strong>Decimals:</strong> A way to write fractions or mixed numbers using a dot. Each place to the right of the dot represents tenths, hundredths, etc.";
-        } else if (query.includes("square root")) {
-          response = "<strong>Square Root (√):</strong> A number that, when multiplied by itself, gives the original number. Example: <code>√25 = 5</code>.";
-        } else if (query.includes("hi") || query.includes("hello")) {
-          response = "Hello! I am your Math AI. I can explain formulas, definitions, and rules. Ask me about <strong>Area</strong>, <strong>Primes</strong>, or <strong>PEMDAS</strong>!";
-        } else {
-          response = "I'm still learning that specific topic, but I can explain <strong>Primes, Pi, Area, Fractions, PEMDAS, and Square Roots</strong> right now!";
+    // Panel tab switching
+    document.querySelectorAll('.panel-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel-content').forEach(c => c.classList.remove('active'));
+        
+        this.classList.add('active');
+        const tabName = this.dataset.tab;
+        document.getElementById(tabName + 'Panel').classList.add('active');
+        
+        if (tabName === 'history') {
+          updateHistoryDisplay();
+          updateMemoryDisplay();
         }
+      });
+    });
 
-        addMessage(response, "ai");
-      }, 400);
+    historyToggle.onclick = function() {
+      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel-content').forEach(c => c.classList.remove('active'));
+      document.querySelector('.panel-tab[data-tab="history"]').classList.add('active');
+      document.getElementById('historyPanel').classList.add('active');
+      updateHistoryDisplay();
+      updateMemoryDisplay();
+    };
+
+    function updateHistoryDisplay() {
+      if (calculationHistory.length === 0) {
+        historyList.innerHTML = '<div class="no-history">No calculations yet</div>';
+      } else {
+        historyList.innerHTML = calculationHistory.map((item, index) => `
+          <div class="history-item" data-index="${index}">
+            <div class="history-expression">${item.expression}</div>
+            <div class="history-result">= ${item.result}</div>
+          </div>
+        `).reverse().join('');
+        
+        document.querySelectorAll('.history-item').forEach(item => {
+          item.addEventListener('click', function() {
+            const index = parseInt(this.dataset.index);
+            useHistoryResult(index);
+          });
+        });
+      }
     }
+
+    function useHistoryResult(index) {
+      const item = calculationHistory[calculationHistory.length - 1 - index];
+      setDisplay(item.result);
+      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel-content').forEach(c => c.classList.remove('active'));
+      document.querySelector('.panel-tab[data-tab="chatgpt"]').classList.add('active');
+      document.getElementById('chatgptPanel').classList.add('active');
+    }
+
+    clearHistoryBtn.onclick = function() {
+      calculationHistory = [];
+      updateHistoryDisplay();
+    };
+
+    clearMemoryBtn.onclick = function() {
+      memoryVal = 0;
+      updateMemoryDisplay();
+    };
+
+    function updateMemoryDisplay() {
+      if (memoryVal === 0) {
+        memoryList.innerHTML = '<div class="no-memory">No memory stored</div>';
+      } else {
+        memoryList.innerHTML = `<div class="memory-item" id="memoryItem">M = ${memoryVal}</div>`;
+        document.getElementById('memoryItem').addEventListener('click', useMemoryValue);
+      }
+    }
+
+    function useMemoryValue() {
+      setDisplay(String(memoryVal));
+      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel-content').forEach(c => c.classList.remove('active'));
+      document.querySelector('.panel-tab[data-tab="chatgpt"]').classList.add('active');
+      document.getElementById('chatgptPanel').classList.add('active');
+    }
+
+    function setDisplay(val) {
+      currentVal = String(val);
+      displayEl.value = currentVal;
+    }
+
+    function setHistory(text) {
+      historyEl.textContent = text || '\u00A0';
+    }
+
+    function addMessage(text, isUser) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message ' + (isUser ? 'user-message' : 'ai-message');
+      msgDiv.textContent = text;
+      chatArea.appendChild(msgDiv);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function showLoading() {
+      const loadDiv = document.createElement('div');
+      loadDiv.className = 'loading';
+      loadDiv.id = 'loadingMsg';
+      loadDiv.innerHTML = '<span style="animation: pulse 1.5s ease-in-out infinite;">●</span> Claude is thinking...';
+      chatArea.appendChild(loadDiv);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function removeLoading() {
+      const loadDiv = document.getElementById('loadingMsg');
+      if (loadDiv) loadDiv.remove();
+    }
+
+    async function askChatGPT(question, isCalculation = false) {
+      try {
+        showLoading();
+        
+        // Build prompt based on context
+        let userMessage = question;
+        if (isCalculation) {
+          userMessage = `I just performed this calculation: ${question}. Please explain it briefly and clearly in 2-3 sentences.`;
+        }
+        
+        // Add to conversation history
+        conversationHistory.push({
+          role: "user",
+          content: userMessage
+        });
+        
+        // Call Claude API
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1000,
+            system: "You are a helpful math tutor integrated into a calculator app. Explain mathematical concepts clearly and concisely. When explaining calculations, be brief (2-3 sentences) but educational. For general math questions, provide thorough but accessible explanations. Use simple language and examples.",
+            messages: conversationHistory
+          })
+        });
+
+        const data = await response.json();
+        
+        // Extract response text
+        let aiResponse = '';
+        if (data.content && data.content.length > 0) {
+          aiResponse = data.content
+            .filter(item => item.type === "text")
+            .map(item => item.text)
+            .join("\n");
+        }
+        
+        // Add AI response to conversation history
+        conversationHistory.push({
+          role: "assistant",
+          content: aiResponse
+        });
+        
+        // Keep conversation history manageable (last 10 messages)
+        if (conversationHistory.length > 10) {
+          conversationHistory = conversationHistory.slice(-10);
+        }
+        
+        removeLoading();
+        addMessage(aiResponse, false);
+        
+      } catch (error) {
+        console.error("API Error:", error);
+        removeLoading();
+        addMessage("I'm ready to help with math! Ask me anything about calculations or math concepts.", false);
+      }
+    }
+
+    async function solveChatGPT(equation) {
+      try {
+        solveBtn.disabled = true;
+        solutionContent.textContent = 'Claude is solving your equation...';
+        
+        // Call Claude API for equation solving
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1000,
+            system: "You are a math tutor helping solve equations. Provide step-by-step solutions with clear explanations. Format your response with headers like 'Step 1:', 'Step 2:', etc. Show all work and verify the solution at the end.",
+            messages: [
+              {
+                role: "user",
+                content: `Please solve this equation step-by-step: ${equation}
+
+Provide:
+1. The complete step-by-step solution
+2. Explanation of each step
+3. Verification of the answer
+4. The final answer clearly marked
+
+Format it clearly with headers and steps.`
+              }
+            ]
+          })
+        });
+
+        const data = await response.json();
+        
+        // Extract solution text
+        let solution = '';
+        if (data.content && data.content.length > 0) {
+          solution = data.content
+            .filter(item => item.type === "text")
+            .map(item => item.text)
+            .join("\n");
+        }
+        
+        if (!solution) {
+          solution = "I couldn't solve that equation. Please check the format and try again!";
+        }
+        
+        solutionContent.textContent = solution;
+        
+      } catch (error) {
+        console.error("Equation solver error:", error);
+        solutionContent.textContent = "Sorry, I had trouble solving that equation. Please try again or ask me in the chat for help!";
+      } finally {
+        solveBtn.disabled = false;
+      }
+    }
+
+    sendBtn.onclick = async function() {
+      const question = aiInput.value.trim();
+      if (!question) return;
+      
+      addMessage(question, true);
+      aiInput.value = '';
+      sendBtn.disabled = true;
+      
+      await askChatGPT(question);
+      sendBtn.disabled = false;
+    };
+
+    aiInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendBtn.click();
+      }
+    });
+
+    solveBtn.onclick = function() {
+      const equation = equationInput.value.trim();
+      if (!equation) {
+        solutionContent.textContent = 'Please enter an equation first!';
+        return;
+      }
+      solveChatGPT(equation);
+    };
+
+    equationInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        solveBtn.click();
+      }
+    });
+
+    function inputDigit(digit) {
+      if (waitingForOperand) {
+        setDisplay(digit);
+        waitingForOperand = false;
+      } else {
+        setDisplay(currentVal === '0' ? digit : currentVal + digit);
+      }
+    }
+
+    function inputDecimal() {
+      if (waitingForOperand) {
+        setDisplay('0.');
+        waitingForOperand = false;
+      } else if (currentVal.indexOf('.') === -1) {
+        setDisplay(currentVal + '.');
+      }
+    }
+
+    function clearAll() {
+      setDisplay('0');
+      setHistory('');
+      previousVal = null;
+      operator = null;
+      waitingForOperand = false;
+    }
+
+    function clearEntry() {
+      setDisplay('0');
+    }
+
+    function backspace() {
+      const newVal = currentVal.slice(0, -1);
+      setDisplay(newVal || '0');
+    }
+
+    function performOperation(nextOperator) {
+      const inputValue = parseFloat(currentVal);
+
+      if (previousVal === null) {
+        previousVal = inputValue;
+      } else if (operator) {
+        const result = calculate(previousVal, inputValue, operator);
+        setDisplay(String(result));
+        previousVal = result;
+      }
+
+      waitingForOperand = true;
+      operator = nextOperator;
+      
+      const opSymbol = {
+        'ADD': '+',
+        'SUBTRACT': '−',
+        'MULTIPLY': '×',
+        'DIVIDE': '÷'
+      }[nextOperator];
+      
+      setHistory(previousVal + ' ' + opSymbol);
+    }
+
+    function calculate(firstOperand, secondOperand, op) {
+      switch(op) {
+        case 'ADD':
+          return firstOperand + secondOperand;
+        case 'SUBTRACT':
+          return firstOperand - secondOperand;
+        case 'MULTIPLY':
+          return firstOperand * secondOperand;
+        case 'DIVIDE':
+          if (secondOperand === 0) {
+            setHistory('');
+            return 'Cannot divide by zero';
+          }
+          return firstOperand / secondOperand;
+        default:
+          return secondOperand;
+      }
+    }
+
+    function performEquals() {
+      const inputValue = parseFloat(currentVal);
+
+      if (previousVal !== null && operator) {
+        const result = calculate(previousVal, inputValue, operator);
+        
+        const opSymbol = {
+          'ADD': '+',
+          'SUBTRACT': '−',
+          'MULTIPLY': '×',
+          'DIVIDE': '÷'
+        }[operator];
+        
+        const expression = previousVal + ' ' + opSymbol + ' ' + inputValue;
+        lastCalculation = expression + ' = ' + result;
+        
+        calculationHistory.push({
+          expression: expression,
+          result: result
+        });
+        
+        setHistory(lastCalculation);
+        setDisplay(String(result));
+        
+        // Check for 9/11 easter egg
+        const is911 = (previousVal === 9 && inputValue === 11 && operator === 'DIVIDE');
+        
+        addMessage(`I just calculated: ${lastCalculation}`, true);
+        askChatGPT(`Explain this calculation briefly: ${lastCalculation}. Keep it simple and short.`, true);
+        
+        // Add airplane emoji for 9/11
+        if (is911) {
+          setTimeout(() => {
+            const emojiDiv = document.createElement('div');
+            emojiDiv.className = 'message ai-message';
+            emojiDiv.style.fontSize = '48px';
+            emojiDiv.style.textAlign = 'center';
+            emojiDiv.textContent = '✈️';
+            chatArea.appendChild(emojiDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+          }, 1500);
+        }
+        
+        previousVal = null;
+        operator = null;
+        waitingForOperand = true;
+      }
+    }
+
+    function performFunction(fn) {
+      const inputValue = parseFloat(currentVal);
+      let result;
+      let explanation = '';
+
+      switch(fn) {
+        case 'PERCENT':
+          result = inputValue / 100;
+          explanation = `${inputValue}% = ${result}`;
+          break;
+        case 'RECIPROCAL':
+          if (inputValue === 0) {
+            result = 'Cannot divide by zero';
+          } else {
+            result = 1 / inputValue;
+            explanation = `1/${inputValue} = ${result}`;
+          }
+          break;
+        case 'SQUARE':
+          result = inputValue * inputValue;
+          explanation = `${inputValue}² = ${result}`;
+          break;
+        case 'SQRT':
+          if (inputValue < 0) {
+            result = 'Invalid input';
+          } else {
+            result = Math.sqrt(inputValue);
+            explanation = `√${inputValue} = ${result}`;
+          }
+          break;
+        case 'NEGATE':
+          result = -inputValue;
+          break;
+      }
+
+      setDisplay(String(result));
+      
+      if (fn !== 'NEGATE' && explanation) {
+        addMessage(`I just calculated: ${explanation}`, true);
+        askChatGPT(`Explain this calculation briefly: ${explanation}. Keep it simple and short.`, true);
+      }
+      
+      if (fn !== 'NEGATE') {
+        waitingForOperand = true;
+      }
+    }
+
+    // Number buttons
+    document.getElementById('n0').onclick = () => inputDigit('0');
+    document.getElementById('n1').onclick = () => inputDigit('1');
+    document.getElementById('n2').onclick = () => inputDigit('2');
+    document.getElementById('n3').onclick = () => inputDigit('3');
+    document.getElementById('n4').onclick = () => inputDigit('4');
+    document.getElementById('n5').onclick = () => inputDigit('5');
+    document.getElementById('n6').onclick = () => inputDigit('6');
+    document.getElementById('n7').onclick = () => inputDigit('7');
+    document.getElementById('n8').onclick = () => inputDigit('8');
+    document.getElementById('n9').onclick = () => inputDigit('9');
+    document.getElementById('decimal').onclick = () => inputDecimal();
+
+    // Operator buttons
+    document.getElementById('add').onclick = () => performOperation('ADD');
+    document.getElementById('subtract').onclick = () => performOperation('SUBTRACT');
+    document.getElementById('multiply').onclick = () => performOperation('MULTIPLY');
+    document.getElementById('divide').onclick = () => performOperation('DIVIDE');
+    document.getElementById('equals').onclick = () => performEquals();
+
+    // Function buttons
+    document.getElementById('clear').onclick = () => clearAll();
+    document.getElementById('ce').onclick = () => clearEntry();
+    document.getElementById('back').onclick = () => backspace();
+    document.getElementById('percent').onclick = () => performFunction('PERCENT');
+    document.getElementById('recip').onclick = () => performFunction('RECIPROCAL');
+    document.getElementById('square').onclick = () => performFunction('SQUARE');
+    document.getElementById('sqrt').onclick = () => performFunction('SQRT');
+    document.getElementById('negate').onclick = () => performFunction('NEGATE');
+
+    // Memory buttons
+    document.getElementById('mc').onclick = () => {
+      memoryVal = 0;
+      updateMemoryDisplay();
+    };
+    
+    document.getElementById('mr').onclick = () => {
+      setDisplay(String(memoryVal));
+    };
+    
+    document.getElementById('mAdd').onclick = () => {
+      memoryVal += parseFloat(currentVal);
+      updateMemoryDisplay();
+    };
+    
+    document.getElementById('mSub').onclick = () => {
+      memoryVal -= parseFloat(currentVal);
+      updateMemoryDisplay();
+    };
+    
+    document.getElementById('ms').onclick = () => {
+      memoryVal = parseFloat(currentVal);
+      updateMemoryDisplay();
+    };
   </script>
 </body>
 </html>
