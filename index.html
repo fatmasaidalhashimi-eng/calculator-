@@ -306,6 +306,45 @@
       color: #333;
     }
 
+    .history-list {
+      padding: 20px 16px;
+      background: #fafafa;
+      min-height: 400px;
+    }
+
+    .history-list h3 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .history-item {
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border-left: 4px solid #dc6bba;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .history-item:hover {
+      background: #ffe6fc;
+      transform: translateX(5px);
+    }
+
+    .history-expression {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .history-result {
+      font-size: 20px;
+      color: #333;
+      font-weight: 600;
+    }
+
     .memory-item {
       background: white;
       padding: 12px;
@@ -315,11 +354,27 @@
       font-size: 18px;
     }
 
-    .no-memory {
+    .no-memory, .no-history {
       color: #888;
       text-align: center;
       margin-top: 50px;
       font-size: 14px;
+    }
+
+    .clear-history-btn {
+      background: #dc6bba;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-bottom: 15px;
+      transition: all 0.2s;
+    }
+
+    .clear-history-btn:hover {
+      background: #c95aa7;
     }
 
     .display-area {
@@ -454,17 +509,12 @@
     </div>
 
     <div class="calc-content active" id="historyView">
-      <div class="display-area">
-        <div class="history-text" id="history">&nbsp;</div>
-        <input type="text" class="display" id="display" value="0" readonly>
-      </div>
-
-      <div class="memory-buttons">
-        <button class="memory-btn" id="mc">MC</button>
-        <button class="memory-btn" id="mr">MR</button>
-        <button class="memory-btn" id="mAdd">M+</button>
-        <button class="memory-btn" id="mSub">M−</button>
-        <button class="memory-btn" id="ms">MS</button>
+      <div class="history-list">
+        <h3>History</h3>
+        <button class="clear-history-btn" id="clearHistoryBtn">Clear History</button>
+        <div id="historyList">
+          <div class="no-history">No calculations yet</div>
+        </div>
       </div>
     </div>
 
@@ -475,6 +525,19 @@
           <div class="no-memory">No memory stored</div>
         </div>
       </div>
+    </div>
+
+    <div class="display-area">
+      <div class="history-text" id="history">&nbsp;</div>
+      <input type="text" class="display" id="display" value="0" readonly>
+    </div>
+
+    <div class="memory-buttons">
+      <button class="memory-btn" id="mc">MC</button>
+      <button class="memory-btn" id="mr">MR</button>
+      <button class="memory-btn" id="mAdd">M+</button>
+      <button class="memory-btn" id="mSub">M−</button>
+      <button class="memory-btn" id="ms">MS</button>
     </div>
 
     <div class="buttons">
@@ -561,6 +624,7 @@
       let waitingForOperand = false;
       let memoryVal = 0;
       let lastCalculation = '';
+      let calculationHistory = [];
 
       const displayEl = document.getElementById('display');
       const historyEl = document.getElementById('history');
@@ -571,6 +635,8 @@
       const solveBtn = document.getElementById('solveBtn');
       const solutionContent = document.getElementById('solutionContent');
       const memoryList = document.getElementById('memoryList');
+      const historyList = document.getElementById('historyList');
+      const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
       // Calculator tab switching
       document.querySelectorAll('.calc-tab').forEach(tab => {
@@ -584,9 +650,35 @@
           
           if (tabName === 'memory') {
             updateMemoryDisplay();
+          } else if (tabName === 'history') {
+            updateHistoryDisplay();
           }
         });
       });
+
+      function updateHistoryDisplay() {
+        if (calculationHistory.length === 0) {
+          historyList.innerHTML = '<div class="no-history">No calculations yet</div>';
+        } else {
+          historyList.innerHTML = calculationHistory.map((item, index) => `
+            <div class="history-item" onclick="useHistoryResult(${index})">
+              <div class="history-expression">${item.expression}</div>
+              <div class="history-result">= ${item.result}</div>
+            </div>
+          `).reverse().join('');
+        }
+      }
+
+      window.useHistoryResult = function(index) {
+        const item = calculationHistory[calculationHistory.length - 1 - index];
+        setDisplay(item.result);
+        document.querySelector('.calc-tab[data-calc-tab="history"]').click();
+      };
+
+      clearHistoryBtn.onclick = function() {
+        calculationHistory = [];
+        updateHistoryDisplay();
+      };
 
       function updateMemoryDisplay() {
         if (memoryVal === 0) {
@@ -838,7 +930,15 @@ Format your response clearly with line breaks between steps.`
             'DIVIDE': '÷'
           }[operator];
           
-          lastCalculation = previousVal + ' ' + opSymbol + ' ' + inputValue + ' = ' + result;
+          const expression = previousVal + ' ' + opSymbol + ' ' + inputValue;
+          lastCalculation = expression + ' = ' + result;
+          
+          // Add to history
+          calculationHistory.push({
+            expression: expression,
+            result: result
+          });
+          
           setHistory(lastCalculation);
           setDisplay(String(result));
           previousVal = null;
