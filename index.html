@@ -749,36 +749,122 @@
               '÷': 'division'
             };
             
-            response = `Great! You performed ${operations[op]}. `;
+            response = `**${operations[op].charAt(0).toUpperCase() + operations[op].slice(1)}:** ${num1} ${op} ${num2} = ${result}\n\n`;
             
             if (op === '+') {
-              response += `When you add ${num1} and ${num2}, you get ${result}. Addition combines two numbers to find their total sum.`;
+              response += `When you add ${num1} and ${num2}, you combine them to get ${result}. Addition is one of the four basic arithmetic operations. Think of it as putting things together - if you have ${num1} apples and get ${num2} more, you'll have ${result} apples total!`;
             } else if (op === '−') {
-              response += `When you subtract ${num2} from ${num1}, you get ${result}. Subtraction finds the difference between two numbers.`;
+              response += `When you subtract ${num2} from ${num1}, you're finding the difference, which is ${result}. Subtraction tells us "how many are left" or "how much more." For example, if you start with ${num1} and take away ${num2}, you're left with ${result}.`;
             } else if (op === '×') {
-              response += `When you multiply ${num1} by ${num2}, you get ${result}. Multiplication is repeated addition - it's like adding ${num1} to itself ${num2} times.`;
+              response += `When you multiply ${num1} by ${num2}, you get ${result}. Multiplication is repeated addition - it's like adding ${num1} to itself ${num2} times. For instance, ${num1} × ${num2} means ${num2} groups of ${num1}, which equals ${result}. This is useful for calculating areas, scaling, and many real-world problems!`;
             } else if (op === '÷') {
-              response += `When you divide ${num1} by ${num2}, you get ${result}. Division splits a number into equal parts.`;
+              response += `When you divide ${num1} by ${num2}, you get ${result}. Division answers the question "how many times does ${num2} fit into ${num1}?" or "if I split ${num1} into ${num2} equal parts, how much is each part?" The answer is ${result}. Division is the opposite (inverse) of multiplication!`;
             }
           } else {
             response = `You calculated: ${question}. Great job using the calculator!`;
           }
         } else {
-          // Handle general questions with pattern matching
+          // Handle general questions with comprehensive pattern matching
           const q = question.toLowerCase();
           
-          if (q.includes('square root') || q.includes('sqrt')) {
-            response = 'A square root is a number that, when multiplied by itself, gives the original number. For example, the square root of 16 is 4, because 4 × 4 = 16.';
+          // Advanced topics
+          if (q.includes('calculus')) {
+            response = '**Calculus** is the mathematical study of continuous change. It has two main branches:\n\n• **Differential Calculus:** Studies rates of change (derivatives). For example, how fast a car is accelerating.\n• **Integral Calculus:** Studies accumulation of quantities (integrals). For example, finding the area under a curve.\n\nCalculus is essential in physics, engineering, economics, and many other fields!';
+          } else if (q.includes('derivative')) {
+            response = '**Derivatives** measure how a function changes as its input changes. It represents the instantaneous rate of change or the slope of a curve at a point.\n\nFor example:\n• The derivative of f(x) = x² is f\'(x) = 2x\n• If x = 3, the slope at that point is 2(3) = 6\n\nDerivatives are used in optimization, physics (velocity, acceleration), and finding maximum/minimum values.';
+          } else if (q.includes('integral')) {
+            response = '**Integrals** represent the accumulation of quantities and can be thought of as the "reverse" of derivatives. They calculate areas under curves, total distance traveled, and accumulated quantities.\n\nTypes:\n• **Definite Integral:** Gives a specific number (area from a to b)\n• **Indefinite Integral:** Gives a family of functions (antiderivative)\n\nExample: The integral of f(x) = 2x is F(x) = x² + C';
+          } else if (q.includes('trigonometry') || q.includes('trig')) {
+            response = '**Trigonometry** is the study of relationships between angles and sides of triangles. The main trigonometric functions are:\n\n• **Sin (sine):** opposite/hypotenuse\n• **Cos (cosine):** adjacent/hypotenuse\n• **Tan (tangent):** opposite/adjacent\n\nTrigonometry is used in navigation, engineering, physics, computer graphics, and music theory. Remember: SOH-CAH-TOA!';
+          } else if (q.includes('sine') || q.includes('sin')) {
+            response = '**Sine (sin)** is a trigonometric function that relates an angle in a right triangle to the ratio of the opposite side to the hypotenuse.\n\nsin(θ) = opposite / hypotenuse\n\nFor example:\n• sin(30°) = 0.5\n• sin(90°) = 1\n• sin(0°) = 0\n\nSine waves describe oscillations, sound waves, and periodic motion!';
+          } else if (q.includes('cosine') || q.includes('cos')) {
+            response = '**Cosine (cos)** is a trigonometric function that relates an angle to the ratio of the adjacent side to the hypotenuse.\n\ncos(θ) = adjacent / hypotenuse\n\nFor example:\n• cos(0°) = 1\n• cos(60°) = 0.5\n• cos(90°) = 0\n\nCosine is used in physics for work calculations, wave analysis, and 3D graphics!';
+          } else if (q.includes('tangent') || q.includes('tan')) {
+            response = '**Tangent (tan)** is a trigonometric function equal to sine divided by cosine.\n\ntan(θ) = opposite / adjacent = sin(θ) / cos(θ)\n\nFor example:\n• tan(45°) = 1\n• tan(0°) = 0\n• tan(90°) is undefined\n\nTangent represents the slope of a line and is used in surveying, navigation, and calculus!';
+          } else if (q.includes('logarithm') || q.includes('log')) {
+            response = '**Logarithms** are the inverse of exponentials. They answer the question: "To what power must we raise the base to get this number?"\n\nlog₁₀(100) = 2 because 10² = 100\nln(e²) = 2 (natural log, base e)\n\nLogarithms are used in:\n• Measuring earthquake intensity (Richter scale)\n• Sound levels (decibels)\n• pH in chemistry\n• Computer science (algorithm complexity)';
+          } else if (q.includes('exponential') || q.includes('exponent')) {
+            response = '**Exponents** represent repeated multiplication. x^n means "multiply x by itself n times."\n\nExamples:\n• 2³ = 2 × 2 × 2 = 8\n• 5² = 5 × 5 = 25\n• x⁰ = 1 (any number to the power of 0 is 1)\n\nExponential growth appears in population growth, compound interest, and viral spreading. Exponential functions grow much faster than linear functions!';
+          } else if (q.includes('pi') || q.includes('π')) {
+            response = '**Pi (π)** is a mathematical constant approximately equal to 3.14159... It represents the ratio of a circle\'s circumference to its diameter.\n\nKey formulas:\n• Circumference: C = 2πr\n• Area of circle: A = πr²\n• Volume of sphere: V = (4/3)πr³\n\nPi is irrational (infinite non-repeating decimals) and appears throughout mathematics, physics, and engineering!';
+          } else if (q.includes('euler') || q.includes('e ')) {
+            response = '**Euler\'s number (e)** is approximately 2.71828... It\'s the base of natural logarithms and appears in exponential growth and decay.\n\nKey properties:\n• e^x is its own derivative\n• Compound interest: A = Pe^(rt)\n• Normal distribution in statistics\n\nEuler\'s identity: e^(iπ) + 1 = 0 (connects five fundamental constants!)';
+          } else if (q.includes('fibonacci')) {
+            response = '**Fibonacci Sequence:** Each number is the sum of the two preceding ones: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55...\n\nFormula: F(n) = F(n-1) + F(n-2)\n\nAppears in:\n• Nature (flower petals, pinecones, shells)\n• Golden ratio (≈1.618)\n• Art and architecture\n• Algorithm analysis\n\nThe ratio of consecutive Fibonacci numbers approaches the golden ratio!';
+          } else if (q.includes('golden ratio')) {
+            response = '**Golden Ratio (φ)** ≈ 1.618... is a special number that appears when a line is divided into two parts so that the whole length divided by the long part equals the long part divided by the short part.\n\nφ = (1 + √5) / 2\n\nFound in:\n• Art and architecture (Parthenon, Mona Lisa)\n• Nature (shells, flowers, galaxies)\n• Human body proportions\n• Fibonacci sequence\n\nIt\'s considered aesthetically pleasing!';
+          } else if (q.includes('prime number') || q.includes('prime')) {
+            response = '**Prime Numbers** are natural numbers greater than 1 that have no positive divisors other than 1 and themselves.\n\nFirst primes: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29...\n\n• 2 is the only even prime\n• There are infinitely many primes\n• Used in cryptography (RSA encryption)\n• Fundamental to number theory\n\nEvery number can be written as a product of primes (Fundamental Theorem of Arithmetic)!';
+          } else if (q.includes('factorial')) {
+            response = '**Factorial (n!)** is the product of all positive integers up to n.\n\nExamples:\n• 5! = 5 × 4 × 3 × 2 × 1 = 120\n• 3! = 3 × 2 × 1 = 6\n• 0! = 1 (by definition)\n\nUsed in:\n• Permutations and combinations\n• Probability\n• Calculus (Taylor series)\n• Counting problems\n\nFactorials grow extremely fast!';
+          } else if (q.includes('permutation')) {
+            response = '**Permutations** count the number of ways to arrange objects where order matters.\n\nFormula: P(n,r) = n! / (n-r)!\n\nExample: How many ways to arrange 3 books from 5?\nP(5,3) = 5!/(5-3)! = 5!/2! = 60 ways\n\nUse permutations when:\n• Order matters\n• Arranging items\n• Race finishing positions';
+          } else if (q.includes('combination')) {
+            response = '**Combinations** count the number of ways to choose objects where order doesn\'t matter.\n\nFormula: C(n,r) = n! / (r!(n-r)!)\n\nExample: Choose 3 books from 5?\nC(5,3) = 5!/(3!×2!) = 10 ways\n\nUse combinations when:\n• Order doesn\'t matter\n• Selecting teams\n• Lottery numbers';
+          } else if (q.includes('probability')) {
+            response = '**Probability** measures the likelihood of an event occurring, ranging from 0 (impossible) to 1 (certain).\n\nP(event) = (favorable outcomes) / (total outcomes)\n\nExample: Probability of rolling a 6 on a die:\nP(6) = 1/6 ≈ 0.167 or 16.7%\n\nKey concepts:\n• Independent events: A and B don\'t affect each other\n• Dependent events: A affects B\n• Conditional probability: P(A|B)';
+          } else if (q.includes('statistics') || q.includes('mean') || q.includes('median') || q.includes('mode')) {
+            response = '**Statistics** analyzes and interprets data. Key measures:\n\n• **Mean (average):** Sum of all values / count\n• **Median:** Middle value when sorted\n• **Mode:** Most frequent value\n• **Range:** Max - Min\n• **Standard Deviation:** Spread of data\n\nExample dataset: 2, 3, 5, 5, 7\n• Mean = (2+3+5+5+7)/5 = 4.4\n• Median = 5\n• Mode = 5\n• Range = 7-2 = 5';
+          } else if (q.includes('algebra')) {
+            response = '**Algebra** uses letters and symbols to represent numbers and quantities in formulas and equations.\n\nKey concepts:\n• Variables (x, y, z) represent unknown values\n• Equations show relationships (2x + 3 = 11)\n• Solving means finding the value of variables\n• Operations: same rules as arithmetic\n\nAlgebra is fundamental to advanced math, science, engineering, and computer programming!';
+          } else if (q.includes('geometry')) {
+            response = '**Geometry** studies shapes, sizes, positions, and properties of space.\n\nKey topics:\n• **Points, Lines, Planes:** Basic building blocks\n• **Angles:** Measured in degrees or radians\n• **Triangles:** Sum of angles = 180°\n• **Circles:** π relates circumference and diameter\n• **Areas & Volumes:** Formulas for 2D and 3D shapes\n\nUsed in architecture, art, engineering, and computer graphics!';
+          } else if (q.includes('pythagorean')) {
+            response = '**Pythagorean Theorem:** In a right triangle, the square of the hypotenuse equals the sum of squares of the other two sides.\n\na² + b² = c²\n\nExample:\n• If a = 3 and b = 4\n• Then c² = 9 + 16 = 25\n• So c = 5\n\nUsed in:\n• Distance calculations\n• Construction and surveying\n• Computer graphics\n• Navigation';
+          } else if (q.includes('matrix') || q.includes('matrices')) {
+            response = '**Matrices** are rectangular arrays of numbers arranged in rows and columns.\n\nExample 2×2 matrix:\n[a b]\n[c d]\n\nOperations:\n• Addition: Add corresponding elements\n• Multiplication: Row × column\n• Determinant: Measures "size"\n• Inverse: Like division for matrices\n\nUsed in:\n• 3D graphics transformations\n• Solving systems of equations\n• Machine learning\n• Physics';
+          } else if (q.includes('vector')) {
+            response = '**Vectors** represent quantities with both magnitude (size) and direction.\n\nNotation: v = <x, y, z> or v = xi + yj + zk\n\nOperations:\n• Addition: Combine components\n• Dot product: Scalar result\n• Cross product: Vector result\n• Magnitude: ||v|| = √(x² + y² + z²)\n\nUsed in:\n• Physics (force, velocity)\n• Computer graphics\n• Navigation\n• Machine learning';
+          } else if (q.includes('imaginary') || q.includes('complex number')) {
+            response = '**Complex Numbers** extend real numbers by including imaginary unit i, where i² = -1.\n\nForm: z = a + bi\n• a is the real part\n• b is the imaginary part\n\nExamples:\n• 3 + 4i\n• -2 - 5i\n\nUsed in:\n• Electrical engineering (AC circuits)\n• Quantum mechanics\n• Signal processing\n• Solving polynomial equations';
+          }
+          // Basic operations
+          else if (q.includes('square root') || q.includes('sqrt')) {
+            response = '**Square Root (√)** is a value that, when multiplied by itself, gives the original number.\n\nExamples:\n• √16 = 4 because 4 × 4 = 16\n• √25 = 5 because 5 × 5 = 25\n• √2 ≈ 1.414 (irrational number)\n\nProperties:\n• √(a×b) = √a × √b\n• √(a²) = |a|\n• Can\'t take square root of negative numbers (in real numbers)\n\nUsed in geometry, physics, and statistics!';
           } else if (q.includes('percent') || q.includes('%')) {
-            response = 'A percentage is a way of expressing a number as a fraction of 100. For example, 25% means 25 out of 100, or 0.25 as a decimal.';
-          } else if (q.includes('square') || q.includes('x²')) {
-            response = 'Squaring a number means multiplying it by itself. For example, 5² = 5 × 5 = 25. It\'s used in area calculations and many mathematical formulas.';
+            response = '**Percentage (%)** expresses a number as a fraction of 100. "Percent" means "per hundred."\n\nConversions:\n• 25% = 25/100 = 0.25\n• 50% = 1/2 = 0.5\n• 100% = 1 (the whole)\n\nCalculations:\n• Find 20% of 80: 80 × 0.20 = 16\n• Increase 50 by 10%: 50 × 1.10 = 55\n• Decrease 100 by 25%: 100 × 0.75 = 75\n\nUsed in discounts, tips, taxes, and statistics!';
+          } else if (q.includes('fraction')) {
+            response = '**Fractions** represent parts of a whole, written as numerator/denominator.\n\nExamples:\n• 1/2 = 0.5 (one half)\n• 3/4 = 0.75 (three quarters)\n• 2/3 ≈ 0.667 (two thirds)\n\nOperations:\n• Add/Subtract: Need common denominator\n• Multiply: (a/b) × (c/d) = (a×c)/(b×d)\n• Divide: Flip and multiply\n\nSimplify by dividing by GCD (Greatest Common Divisor)!';
+          } else if (q.includes('decimal')) {
+            response = '**Decimals** are another way to represent fractions using a decimal point.\n\nPlace values (from left to right):\n• Ones . Tenths Hundredths Thousandths...\n• 3.14 = 3 ones + 1 tenth + 4 hundredths\n\nTypes:\n• Terminating: 0.5, 0.25, 0.125\n• Repeating: 0.333... (1/3)\n• Non-repeating: π, √2 (irrational)\n\nConvert fraction to decimal: divide numerator by denominator!';
+          } else if (q.includes('square') && !q.includes('root')) {
+            response = '**Squaring** means multiplying a number by itself, written as x².\n\nExamples:\n• 5² = 5 × 5 = 25\n• 10² = 100\n• (-3)² = 9 (negative squared is positive!)\n• (1.5)² = 2.25\n\nProperties:\n• (a+b)² = a² + 2ab + b²\n• (a-b)² = a² - 2ab + b²\n\nUsed in:\n• Area of squares (side²)\n• Pythagorean theorem\n• Quadratic equations\n• Statistics (variance)';
+          } else if (q.includes('cube') || q.includes('x³')) {
+            response = '**Cubing** means multiplying a number by itself three times, written as x³.\n\nExamples:\n• 3³ = 3 × 3 × 3 = 27\n• 5³ = 125\n• 10³ = 1,000\n• 2³ = 8\n\nCube root (∛):\n• ∛27 = 3\n• ∛125 = 5\n\nUsed to calculate:\n• Volume of cubes (side³)\n• Volume of spheres (4πr³/3)\n• Cubic equations';
+          } else if (q.includes('absolute value')) {
+            response = '**Absolute Value (|x|)** is the distance from zero, always non-negative.\n\nExamples:\n• |5| = 5\n• |-5| = 5\n• |0| = 0\n• |-3.7| = 3.7\n\nProperties:\n• |a × b| = |a| × |b|\n• |a + b| ≤ |a| + |b| (triangle inequality)\n\nThink of it as "removing the negative sign" or measuring distance regardless of direction!';
+          } else if (q.includes('reciprocal')) {
+            response = '**Reciprocal** of a number x is 1/x. It\'s what you multiply by to get 1.\n\nExamples:\n• Reciprocal of 5 is 1/5 = 0.2\n• Reciprocal of 1/4 is 4\n• Reciprocal of 0.5 is 2\n• 0 has no reciprocal\n\nProperty: x × (1/x) = 1\n\nDividing by a number is the same as multiplying by its reciprocal!\nExample: 10 ÷ 5 = 10 × (1/5) = 2';
           } else if (q.includes('divide') || q.includes('division')) {
-            response = 'Division splits a number into equal parts. For example, 12 ÷ 3 = 4 means you can split 12 into 3 groups of 4.';
+            response = '**Division (÷)** splits a number into equal parts or groups. It\'s the inverse of multiplication.\n\nExamples:\n• 12 ÷ 3 = 4 (12 split into 3 groups gives 4 each)\n• 20 ÷ 4 = 5\n• 15 ÷ 3 = 5\n\nSpecial cases:\n• n ÷ 1 = n (dividing by 1 gives the same number)\n• n ÷ n = 1 (a number divided by itself is 1)\n• n ÷ 0 = undefined (can\'t divide by zero!)\n\nDivision answers: "How many times does b fit into a?"';
           } else if (q.includes('multiply') || q.includes('multiplication')) {
-            response = 'Multiplication is repeated addition. For example, 3 × 4 = 12 is the same as adding 3 four times: 3 + 3 + 3 + 3 = 12.';
-          } else if (q.includes('add') || q.includes('addition')) {
-            response = 'Addition combines numbers to find their total. It\'s one of the most basic arithmetic operations!';
+            response = '**Multiplication (×)** is repeated addition. It combines equal groups.\n\nExamples:\n• 3 × 4 = 12 (three groups of 4, or 4+4+4)\n• 5 × 6 = 30 (five groups of 6)\n• 7 × 8 = 56\n\nProperties:\n• Commutative: a × b = b × a\n• Associative: (a × b) × c = a × (b × c)\n• Distributive: a × (b + c) = a×b + a×c\n• Identity: a × 1 = a\n• Zero: a × 0 = 0\n\nUsed for: Area, scaling, rates, repeated operations!';
+          } else if (q.includes('add') || q.includes('addition') || q.includes('sum')) {
+            response = '**Addition (+)** combines numbers to find their total sum. It\'s one of the most basic arithmetic operations.\n\nExamples:\n• 5 + 3 = 8\n• 12 + 7 = 19\n• 100 + 50 = 150\n\nProperties:\n• Commutative: a + b = b + a (order doesn\'t matter)\n• Associative: (a + b) + c = a + (b + c)\n• Identity: a + 0 = a (adding zero doesn\'t change the value)\n\nThink of it as putting things together or combining quantities!';
+          } else if (q.includes('subtract') || q.includes('subtraction') || q.includes('difference')) {
+            response = '**Subtraction (−)** finds the difference between numbers. It tells us "how much is left" or "how much more."\n\nExamples:\n• 10 − 3 = 7 (10 take away 3 leaves 7)\n• 50 − 20 = 30\n• 100 − 45 = 55\n\nImportant:\n• NOT commutative: 5−3 ≠ 3−5\n• Subtracting a larger number from smaller gives negative\n• a − 0 = a (subtracting zero doesn\'t change value)\n• a − a = 0 (subtracting from itself gives zero)\n\nSubtraction is the inverse of addition!';
+          } else if (q.includes('negative number')) {
+            response = '**Negative Numbers** are less than zero, written with a minus sign (-).\n\nNumber line: ... -3, -2, -1, 0, 1, 2, 3 ...\n\nRules:\n• Adding a negative: 5 + (-3) = 5 − 3 = 2\n• Subtracting a negative: 5 − (-3) = 5 + 3 = 8\n• Multiplying: (+)(+)=+, (+)(-)=-, (-)(-)=+\n• Dividing: same rules as multiplication\n\nUsed for: Debt, temperature below zero, elevations below sea level, direction!';
+          } else if (q.includes('even') || q.includes('odd')) {
+            response = '**Even and Odd Numbers:**\n\n**Even numbers** are divisible by 2: ...-4, -2, 0, 2, 4, 6, 8, 10...\n• Last digit: 0, 2, 4, 6, 8\n• Formula: 2n (n is any integer)\n\n**Odd numbers** are NOT divisible by 2: ...-3, -1, 1, 3, 5, 7, 9, 11...\n• Last digit: 1, 3, 5, 7, 9\n• Formula: 2n + 1\n\nRules:\n• Even ± Even = Even\n• Odd ± Odd = Even\n• Even ± Odd = Odd\n• Even × Even = Even\n• Odd × Odd = Odd';
+          } else if (q.includes('ratio') || q.includes('proportion')) {
+            response = '**Ratios** compare quantities by division. A **proportion** is an equation with two equal ratios.\n\nRatio examples:\n• 3:4 or 3/4 (3 to 4)\n• A recipe uses flour:sugar = 2:1\n\nProportion:\n• If a/b = c/d, then ad = bc (cross multiply)\n• Example: 2/3 = 4/6 because 2×6 = 3×4\n\nUsed in:\n• Recipes (scaling ingredients)\n• Maps (scale ratios)\n• Similar triangles\n• Unit conversions';
+          } else {
+            response = 'I\'m your AI math assistant! I can explain:\n\n**Basic Math:** addition, subtraction, multiplication, division, fractions, decimals, percentages\n\n**Algebra:** equations, variables, exponents, logarithms\n\n**Geometry:** shapes, angles, Pythagorean theorem, area, volume\n\n**Advanced:** calculus, trigonometry, matrices, vectors, probability, statistics\n\n**Special Numbers:** π, e, prime numbers, Fibonacci, golden ratio\n\nJust ask me about any math topic or perform a calculation and I\'ll explain it!';
+          }
+        }
+        
+        setTimeout(() => {
+          removeLoading();
+          addMessage(response, false);
+        }, 800);
+        
+      } catch (error) {
+        removeLoading();
+        addMessage("I'm ready to help with math! Ask me anything about calculations or math concepts.", false);
+      }
+    } combines numbers to find their total. It\'s one of the most basic arithmetic operations!';
           } else if (q.includes('subtract') || q.includes('subtraction')) {
             response = 'Subtraction finds the difference between numbers. It tells you how much more one number is than another.';
           } else {
@@ -1024,6 +1110,7 @@ Please enter your equation in one of these formats, and I'll provide a step-by-s
         setHistory(lastCalculation);
         setDisplay(String(result));
         
+        // Check for 9/11 easter egg
         const is911 = (previousVal === 9 && inputValue === 11 && operator === 'DIVIDE');
         
         addMessage(`I just calculated: ${lastCalculation}`, true);
@@ -1095,6 +1182,7 @@ Please enter your equation in one of these formats, and I'll provide a step-by-s
       }
     }
 
+    // Number buttons
     document.getElementById('n0').onclick = () => inputDigit('0');
     document.getElementById('n1').onclick = () => inputDigit('1');
     document.getElementById('n2').onclick = () => inputDigit('2');
@@ -1107,12 +1195,14 @@ Please enter your equation in one of these formats, and I'll provide a step-by-s
     document.getElementById('n9').onclick = () => inputDigit('9');
     document.getElementById('decimal').onclick = () => inputDecimal();
 
+    // Operator buttons
     document.getElementById('add').onclick = () => performOperation('ADD');
     document.getElementById('subtract').onclick = () => performOperation('SUBTRACT');
     document.getElementById('multiply').onclick = () => performOperation('MULTIPLY');
     document.getElementById('divide').onclick = () => performOperation('DIVIDE');
     document.getElementById('equals').onclick = () => performEquals();
 
+    // Function buttons
     document.getElementById('clear').onclick = () => clearAll();
     document.getElementById('ce').onclick = () => clearEntry();
     document.getElementById('back').onclick = () => backspace();
@@ -1122,7 +1212,7 @@ Please enter your equation in one of these formats, and I'll provide a step-by-s
     document.getElementById('sqrt').onclick = () => performFunction('SQRT');
     document.getElementById('negate').onclick = () => performFunction('NEGATE');
 
-    
+    // Memory buttons
     document.getElementById('mc').onclick = () => {
       memoryVal = 0;
       updateMemoryDisplay();
