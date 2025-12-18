@@ -764,7 +764,16 @@
           })
         });
 
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+
         const data = await response.json();
+        
+        // Check for API errors
+        if (data.error) {
+          throw new Error(data.error.message || "API request failed");
+        }
         
         // Extract response text
         let aiResponse = '';
@@ -776,7 +785,7 @@
         }
         
         if (!aiResponse) {
-          aiResponse = "I'm here to help with any math question! Ask me about concepts like prime numbers, fractions, algebra, geometry, calculus, or any other math topic.";
+          throw new Error("Empty response from API");
         }
         
         // Add AI response to conversation history
@@ -796,7 +805,22 @@
       } catch (error) {
         console.error("API Error:", error);
         removeLoading();
-        addMessage("I'm your comprehensive math assistant! Ask me anything: What are prime numbers? How do fractions work? What is calculus? I can explain any mathematical concept!", false);
+        
+        // Remove the failed user message from history
+        if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === "user") {
+          conversationHistory.pop();
+        }
+        
+        // Provide helpful error message based on error type
+        let errorMessage = '';
+        
+        if (error.message.includes('API Error') || error.message.includes('Failed to fetch')) {
+          errorMessage = "⚠️ AI Connection Error: The Claude AI service is currently unavailable. This calculator works best when used directly on claude.ai. You can still use all calculator functions normally!";
+        } else {
+          errorMessage = "⚠️ Oops! I encountered an issue. Please try again or rephrase your question. The calculator functions work perfectly!";
+        }
+        
+        addMessage(errorMessage, false);
       }
     }
 
@@ -832,7 +856,16 @@ Format it clearly with headers and steps.`
           })
         });
 
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+
         const data = await response.json();
+        
+        // Check for API errors
+        if (data.error) {
+          throw new Error(data.error.message || "API request failed");
+        }
         
         // Extract solution text
         let solution = '';
@@ -844,14 +877,22 @@ Format it clearly with headers and steps.`
         }
         
         if (!solution) {
-          solution = "I couldn't solve that equation. Please check the format and try again!";
+          throw new Error("Empty response from API");
         }
         
         solutionContent.textContent = solution;
         
       } catch (error) {
         console.error("Equation solver error:", error);
-        solutionContent.textContent = "Sorry, I had trouble solving that equation. Please try again or ask me in the chat for help!";
+        
+        let errorMessage = '';
+        if (error.message.includes('API Error') || error.message.includes('Failed to fetch')) {
+          errorMessage = "⚠️ AI Connection Error: The Claude AI equation solver is currently unavailable. This feature works best on claude.ai.\n\nTry using the AI Assistant chat tab instead, or ask your equation question there!";
+        } else {
+          errorMessage = "⚠️ I had trouble solving that equation. Please check the format and try again, or ask me in the chat tab for help!";
+        }
+        
+        solutionContent.textContent = errorMessage;
       } finally {
         solveBtn.disabled = false;
       }
