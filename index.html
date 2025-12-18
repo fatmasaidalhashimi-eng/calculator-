@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff6fe;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .calculator {
+      background: #ffffff;
+      width: 100%;
+      max-width: 320px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mode {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+    }
+
+    .tab {
+      cursor: pointer;
+      padding-bottom: 2px;
+      color: #666;
+    }
+
+    .tab.active {
+      border-bottom: 3px solid #dc6bba;
+      color: #333;
+    }
+
+    .display-area {
+      padding: 20px 16px;
+      text-align: right;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: #fafafa;
+    }
+
+    .history-text {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 8px;
+      min-height: 20px;
+    }
+
+    .display {
+      background: transparent;
+      border: none;
+      color: #000;
+      font-size: 48px;
+      font-weight: 600;
+      text-align: right;
+      width: 100%;
+      outline: none;
+    }
+
+    .memory-buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      padding: 8px 0;
+      background: #f0f0f0;
+    }
+
+    .memory-btn {
+      background: #ffffff;
+      border: none;
+      color: #666;
+      font-size: 13px;
+      padding: 10px;
+      cursor: pointer;
+      font-family: 'Segoe UI', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .memory-btn:hover {
+      background: #ffe6fc;
+      color: #dc6bba;
+    }
+
+    .memory-btn:active {
+      background: #fcdcf9;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      padding: 0;
+      background: #e0e0e0;
+    }
+
+    button {
+      height: 60px;
+      font-size: 20px;
+      border: none;
+      cursor: pointer;
+      background: #fcdcf9;
+      color: #000;
+      font-family: 'Segoe UI', sans-serif;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    button:hover {
+      filter: brightness(0.95);
+    }
+
+    button:active {
+      filter: brightness(0.85);
+      transform: scale(0.98);
+    }
+
+    button.function {
+      background: #fcdcf9;
+      color: #000;
+      font-size: 18px;
+    }
+
+    button.operator {
+      background: #dc6bba;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    button.number {
+      background: #fcdcf9;
+      font-size: 24px;
+    }
+
+    button.equal {
+      background: #a34582;
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 400px) {
+      .calculator {
+        max-width: 100%;
+      }
+      
+      button {
+        height: 55px;
+        font-size: 18px;
+      }
+      
+      .display {
+        font-size: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="header">
+      <div class="mode">Standard</div>
+      <div class="tabs">
+        <div class="tab active">History</div>
+        <div class="tab">Memory</div>
+      </div>
+    </div>
+
+    <div class="display-area">
+      <div class="history-text" id="history">&nbsp;</div>
+      <input type="text" class="display" id="display" value="0" readonly>
+    </div>
+
+    <div class="memory-buttons">
+      <button class="memory-btn" id="mc">MC</button>
+      <button class="memory-btn" id="mr">MR</button>
+      <button class="memory-btn" id="mAdd">M+</button>
+      <button class="memory-btn" id="mSub">M−</button>
+      <button class="memory-btn" id="ms">MS</button>
+    </div>
+
+    <div class="buttons">
+      <button class="function" id="percent">%</button>
+      <button class="function" id="ce">CE</button>
+      <button class="function" id="clear">C</button>
+      <button class="function" id="back">⌫</button>
+
+      <button class="function" id="recip">¹⁄ₓ</button>
+      <button class="function" id="square">x²</button>
+      <button class="function" id="sqrt">²√x</button>
+      <button class="operator" id="divide">÷</button>
+
+      <button class="number" id="n7">7</button>
+      <button class="number" id="n8">8</button>
+      <button class="number" id="n9">9</button>
+      <button class="operator" id="multiply">×</button>
+
+      <button class="number" id="n4">4</button>
+      <button class="number" id="n5">5</button>
+      <button class="number" id="n6">6</button>
+      <button class="operator" id="subtract">−</button>
+
+      <button class="number" id="n1">1</button>
+      <button class="number" id="n2">2</button>
+      <button class="number" id="n3">3</button>
+      <button class="operator" id="add">+</button>
+
+      <button class="function" id="negate">+/−</button>
+      <button class="number" id="n0">0</button>
+      <button class="number" id="decimal">.</button>
+      <button class="equal" id="equals">=</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      let currentVal = '0';
+      let previousVal = null;
+      let operator = null;
+      let waitingForOperand = false;
+      let memoryVal = 0;
+
+      const displayEl = document.getElementById('display');
+      const historyEl = document.getElementById('history');
+
+      function setDisplay(val) {
+        currentVal = String(val);
+        displayEl.value = currentVal;
+      }
+
+      function setHistory(text) {
+        historyEl.textContent = text || '\u00A0';
+      }
+
+      function inputDigit(digit) {
+        if (waitingForOperand) {
+          setDisplay(digit);
+          waitingForOperand = false;
+        } else {
+          setDisplay(currentVal === '0' ? digit : currentVal + digit);
+        }
+      }
+
+      function inputDecimal() {
+        if (waitingForOperand) {
+          setDisplay('0.');
+          waitingForOperand = false;
+        } else if (currentVal.indexOf('.') === -1) {
+          setDisplay(currentVal + '.');
+        }
+      }
+
+      function clearAll() {
+        setDisplay('0');
+        setHistory('');
+        previousVal = null;
+        operator = null;
+        waitingForOperand = false;
+      }
+
+      function clearEntry() {
+        setDisplay('0');
+      }
+
+      function backspace() {
+        const newVal = currentVal.slice(0, -1);
+        setDisplay(newVal || '0');
+      }
+
+      function performOperation(nextOperator) {
+        const inputValue = parseFloat(currentVal);
+
+        if (previousVal === null) {
+          previousVal = inputValue;
+        } else if (operator) {
+          const result = calculate(previousVal, inputValue, operator);
+          setDisplay(String(result));
+          previousVal = result;
+        }
+
+        waitingForOperand = true;
+        operator = nextOperator;
+        
+        const opSymbol = {
+          'ADD': '+',
+          'SUBTRACT': '−',
+          'MULTIPLY': '×',
+          'DIVIDE': '÷'
+        }[nextOperator];
+        
+        setHistory(previousVal + ' ' + opSymbol);
+      }
+
+      function calculate(firstOperand, secondOperand, op) {
+        switch(op) {
+          case 'ADD':
+            return firstOperand + secondOperand;
+          case 'SUBTRACT':
+            return firstOperand - secondOperand;
+          case 'MULTIPLY':
+            return firstOperand * secondOperand;
+          case 'DIVIDE':
+            if (secondOperand === 0) {
+              setHistory('');
+              return 'Cannot divide by zero';
+            }
+            return firstOperand / secondOperand;
+          default:
+            return secondOperand;
+        }
+      }
+
+      function performEquals() {
+        const inputValue = parseFloat(currentVal);
+
+        if (previousVal !== null && operator) {
+          const result = calculate(previousVal, inputValue, operator);
+          
+          const opSymbol = {
+            'ADD': '+',
+            'SUBTRACT': '−',
+            'MULTIPLY': '×',
+            'DIVIDE': '÷'
+          }[operator];
+          
+          setHistory(previousVal + ' ' + opSymbol + ' ' + inputValue + ' =');
+          setDisplay(String(result));
+          previousVal = null;
+          operator = null;
+          waitingForOperand = true;
+        }
+      }
+
+      function performFunction(fn) {
+        const inputValue = parseFloat(currentVal);
+        let result;
+
+        switch(fn) {
+          case 'PERCENT':
+            result = inputValue / 100;
+            break;
+          case 'RECIPROCAL':
+            if (inputValue === 0) {
+              result = 'Cannot divide by zero';
+            } else {
+              result = 1 / inputValue;
+            }
+            break;
+          case 'SQUARE':
+            result = inputValue * inputValue;
+            break;
+          case 'SQRT':
+            if (inputValue < 0) {
+              result = 'Invalid input';
+            } else {
+              result = Math.sqrt(inputValue);
+            }
+            break;
+          case 'NEGATE':
+            result = -inputValue;
+            break;
+        }
+
+        setDisplay(String(result));
+        if (fn !== 'NEGATE') {
+          waitingForOperand = true;
+        }
+      }
+
+      // Number buttons
+      document.getElementById('n0').onclick = () => inputDigit('0');
+      document.getElementById('n1').onclick = () => inputDigit('1');
+      document.getElementById('n2').onclick = () => inputDigit('2');
+      document.getElementById('n3').onclick = () => inputDigit('3');
+      document.getElementById('n4').onclick = () => inputDigit('4');
+      document.getElementById('n5').onclick = () => inputDigit('5');
+      document.getElementById('n6').onclick = () => inputDigit('6');
+      document.getElementById('n7').onclick = () => inputDigit('7');
+      document.getElementById('n8').onclick = () => inputDigit('8');
+      document.getElementById('n9').onclick = () => inputDigit('9');
+
+      // Operation buttons
+      document.getElementById('decimal').onclick = inputDecimal;
+      document.getElementById('clear').onclick = clearAll;
+      document.getElementById('ce').onclick = clearEntry;
+      document.getElementById('back').onclick = backspace;
+
+      document.getElementById('add').onclick = () => performOperation('ADD');
+      document.getElementById('subtract').onclick = () => performOperation('SUBTRACT');
+      document.getElementById('multiply').onclick = () => performOperation('MULTIPLY');
+      document.getElementById('divide').onclick = () => performOperation('DIVIDE');
+      document.getElementById('equals').onclick = performEquals;
+
+      // Function buttons
+      document.getElementById('percent').onclick = () => performFunction('PERCENT');
+      document.getElementById('recip').onclick = () => performFunction('RECIPROCAL');
+      document.getElementById('square').onclick = () => performFunction('SQUARE');
+      document.getElementById('sqrt').onclick = () => performFunction('SQRT');
+      document.getElementById('negate').onclick = () => performFunction('NEGATE');
+
+      // Memory buttons
+      document.getElementById('mc').onclick = () => { memoryVal = 0; };
+      document.getElementById('mr').onclick = () => {
+        setDisplay(String(memoryVal));
+        waitingForOperand = true;
+      };
+      document.getElementById('ms').onclick = () => {
+        memoryVal = parseFloat(currentVal);
+      };
+      document.getElementById('mAdd').onclick = () => {
+        memoryVal += parseFloat(currentVal);
+      };
+      document.getElementById('mSub').onclick = () => {
+        memoryVal -= parseFloat(currentVal);
+      };
+
+      // Keyboard support
+      document.addEventListener('keydown', function(e) {
+        if (e.key >= '0' && e.key <= '9') inputDigit(e.key);
+        else if (e.key === '.') inputDecimal();
+        else if (e.key === '+') performOperation('ADD');
+        else if (e.key === '-') performOperation('SUBTRACT');
+        else if (e.key === '*') performOperation('MULTIPLY');
+        else if (e.key === '/') { e.preventDefault(); performOperation('DIVIDE'); }
+        else if (e.key === 'Enter' || e.key === '=') performEquals();
+        else if (e.key === 'Backspace') backspace();
+        else if (e.key === 'Escape') clearAll();
+      });
+    })();
+  </script>
+</body>
+</html>
