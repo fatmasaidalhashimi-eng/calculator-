@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Math Partner & Calculator</title>
+  <title>AI Math Assistant - Complete Knowledge Base</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: #fff6fe; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px; gap: 20px; flex-wrap: wrap; }
     
-    /* Calculator Styling */
+    /* Calculator UI */
     .calculator { background: #fff; width: 320px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
     .display-area { padding: 20px; background: #fafafa; text-align: right; border-bottom: 1px solid #eee; }
     #history-display { font-size: 14px; color: #888; height: 20px; margin-bottom: 5px; }
@@ -18,11 +18,10 @@
     button { height: 60px; border: none; background: #fff; font-size: 18px; cursor: pointer; transition: 0.2s; }
     button:hover { background: #fdf2fb; }
     .operator { background: #dc6bba; color: white; font-size: 22px; }
-    .operator:hover { background: #c95aa7; }
     .equal { background: #a34582; color: white; font-weight: bold; }
     
-    /* Side Panel Styling */
-    .side-panel { width: 400px; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: 620px; }
+    /* Side Panel */
+    .side-panel { width: 420px; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; height: 650px; }
     .tabs { display: flex; background: #f5f5f5; border-bottom: 2px solid #dc6bba; }
     .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; color: #666; }
     .tab.active { background: #fff; color: #dc6bba; }
@@ -30,15 +29,18 @@
     .content { flex: 1; padding: 20px; overflow-y: auto; display: none; }
     .content.active { display: flex; flex-direction: column; }
     
-    /* Chat Styling */
+    /* AI Chat */
     .chat-container { flex: 1; overflow-y: auto; background: #fafafa; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; }
-    .chat-msg { padding: 10px 14px; border-radius: 12px; font-size: 14px; max-width: 85%; line-height: 1.4; }
-    .ai { background: #fcdcf9; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
-    .user { background: #dc6bba; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .chat-msg { padding: 12px; border-radius: 12px; font-size: 14px; max-width: 90%; line-height: 1.5; }
+    .ai { background: #fcdcf9; color: #333; align-self: flex-start; }
+    .user { background: #dc6bba; color: white; align-self: flex-end; }
     
     .input-row { display: flex; gap: 10px; margin-top: 15px; }
     input[type="text"] { flex: 1; padding: 12px; border: 2px solid #dc6bba; border-radius: 8px; outline: none; }
     .send-btn { background: #dc6bba; color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    
+    strong { color: #a34582; }
+    code { background: #eee; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
   </style>
 </head>
 <body>
@@ -53,45 +55,34 @@
       <button onclick="deleteLast()">⌫</button>
       <button onclick="appendOp('/')" class="operator">÷</button>
       <button onclick="appendOp('*')" class="operator">×</button>
-      
-      <button onclick="appendNum('7')">7</button>
-      <button onclick="appendNum('8')">8</button>
-      <button onclick="appendNum('9')">9</button>
-      <button onclick="appendOp('-')" class="operator">−</button>
-      
-      <button onclick="appendNum('4')">4</button>
-      <button onclick="appendNum('5')">5</button>
-      <button onclick="appendNum('6')">6</button>
-      <button onclick="appendOp('+')" class="operator">+</button>
-      
-      <button onclick="appendNum('1')">1</button>
-      <button onclick="appendNum('2')">2</button>
-      <button onclick="appendNum('3')">3</button>
-      <button onclick="calculate()" class="equal" style="grid-row: span 2">=</button>
-      
-      <button onclick="appendNum('0')" style="grid-column: span 2">0</button>
-      <button onclick="appendNum('.')">.</button>
+      <button onclick="appendNum('7')">7</button><button onclick="appendNum('8')">8</button><button onclick="appendNum('9')">9</button><button onclick="appendOp('-')" class="operator">−</button>
+      <button onclick="appendNum('4')">4</button><button onclick="appendNum('5')">5</button><button onclick="appendNum('6')">6</button><button onclick="appendOp('+')" class="operator">+</button>
+      <button onclick="appendNum('1')">1</button><button onclick="appendNum('2')">2</button><button onclick="appendNum('3')">3</button><button onclick="calculate()" class="equal" style="grid-row: span 2">=</button>
+      <button onclick="appendNum('0')" style="grid-column: span 2">0</button><button onclick="appendNum('.')">.</button>
     </div>
   </div>
 
   <div class="side-panel">
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('ai-tab')">💬 AI Assistant</div>
+      <div class="tab active" onclick="switchTab('ai-tab')">💬 Math AI</div>
       <div class="tab" onclick="switchTab('history-tab')">📋 History</div>
     </div>
-    
     <div id="ai-tab" class="content active">
       <div class="chat-container" id="chat-box">
-        <div class="chat-msg ai"><strong>👋 Hi there!</strong> I'm your Math Partner. I can help explain concepts while you calculate. Try asking: <em>"What is a prime number?"</em></div>
+        <div class="chat-msg ai"><strong>Welcome!</strong> I have a complete library of math knowledge built-in. Ask me about:
+          <br>• Prime Numbers
+          <br>• Fractions/Decimals
+          <br>• Geometry (Area/Volume)
+          <br>• Algebra (PEMDAS/Theorems)
+        </div>
       </div>
       <div class="input-row">
-        <input type="text" id="ai-input" placeholder="Ask a math question...">
+        <input type="text" id="ai-input" placeholder="Explain prime numbers...">
         <button class="send-btn" onclick="handleAI()">Ask</button>
       </div>
     </div>
-
     <div id="history-tab" class="content">
-      <div id="history-list" style="color: #666; font-size: 14px;">No calculations yet.</div>
+      <div id="history-list">No calculations yet.</div>
     </div>
   </div>
 
@@ -100,53 +91,30 @@
     const histDisplay = document.getElementById('history-display');
     let historyEntries = [];
 
-    // --- CALCULATOR LOGIC ---
-    function appendNum(n) {
-      if (mainDisplay.value === '0') mainDisplay.value = n;
-      else mainDisplay.value += n;
-    }
-
+    // --- CALCULATOR ENGINE ---
+    function appendNum(n) { mainDisplay.value === '0' ? mainDisplay.value = n : mainDisplay.value += n; }
     function appendOp(op) {
       const last = mainDisplay.value.slice(-1);
-      if (['+','-','*','/'].includes(last)) {
-        mainDisplay.value = mainDisplay.value.slice(0, -1) + op;
-      } else {
-        mainDisplay.value += op;
-      }
+      if (['+','-','*','/'].includes(last)) mainDisplay.value = mainDisplay.value.slice(0, -1) + op;
+      else mainDisplay.value += op;
     }
-
-    function clearDisplay() {
-      mainDisplay.value = '0';
-      histDisplay.innerText = '';
-    }
-
-    function deleteLast() {
-      mainDisplay.value = mainDisplay.value.slice(0, -1) || '0';
-    }
-
+    function clearDisplay() { mainDisplay.value = '0'; histDisplay.innerText = ''; }
+    function deleteLast() { mainDisplay.value = mainDisplay.value.slice(0, -1) || '0'; }
     function calculate() {
       try {
-        const expression = mainDisplay.value;
-        const result = eval(expression);
-        histDisplay.innerText = expression + ' =';
-        mainDisplay.value = result;
-        
-        // Save to history tab
-        historyEntries.push(`${expression} = ${result}`);
+        const res = eval(mainDisplay.value);
+        const entry = `${mainDisplay.value} = ${res}`;
+        historyEntries.push(entry);
+        histDisplay.innerText = mainDisplay.value + ' =';
+        mainDisplay.value = res;
         updateHistoryUI();
-      } catch (e) {
-        mainDisplay.value = "Error";
-      }
+      } catch { mainDisplay.value = "Error"; }
     }
-
     function updateHistoryUI() {
-      const list = document.getElementById('history-list');
-      list.innerHTML = historyEntries.map(item => 
-        `<div style="padding:10px; border-bottom:1px solid #eee; background:#fff">${item}</div>`
-      ).reverse().join('');
+      document.getElementById('history-list').innerHTML = historyEntries.map(item => `<div style="padding:12px; border-bottom:1px solid #eee; background:#fff;">${item}</div>`).reverse().join('');
     }
 
-    // --- AI LOGIC ---
+    // --- THE MATHEMATICAL KNOWLEDGE ENGINE ---
     function switchTab(id) {
       document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -158,9 +126,8 @@
       const msg = document.createElement('div');
       msg.className = `chat-msg ${sender}`;
       msg.innerHTML = text;
-      const box = document.getElementById('chat-box');
-      box.appendChild(msg);
-      box.scrollTop = box.scrollHeight;
+      document.getElementById('chat-box').appendChild(msg);
+      document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
     }
 
     function handleAI() {
@@ -171,26 +138,35 @@
       addMessage(input.value, 'user');
       input.value = '';
 
-      // Simulate "Thinking" time
       setTimeout(() => {
+        let response = "";
+
+        // Knowledge Matching
         if (query.includes("prime")) {
-          addMessage("A <strong>prime number</strong> is a whole number greater than 1 that cannot be made by multiplying other whole numbers. Its only factors are 1 and itself.<br><br>Examples: 2, 3, 5, 7, 11, 13...", "ai");
+          response = "<strong>Prime Numbers:</strong> Numbers greater than 1 that only have two factors: 1 and themselves. 2 is the only even prime! <br><em>Examples: 2, 3, 5, 7, 11, 13, 17...</em>";
         } else if (query.includes("pi")) {
-          addMessage("<strong>Pi (π)</strong> is the ratio of a circle's circumference to its diameter. It's approximately 3.14159 and is an irrational number.", "ai");
+          response = "<strong>Pi (π):</strong> The ratio of a circle's circumference to its diameter. It is an irrational number approximately equal to <strong>3.14159</strong>.";
         } else if (query.includes("pythagorean")) {
-          addMessage("The <strong>Pythagorean Theorem</strong> states that in a right-angled triangle, the square of the hypotenuse (c) is equal to the sum of the squares of the other two sides (a and b): <strong>a² + b² = c²</strong>.", "ai");
+          response = "<strong>Pythagorean Theorem:</strong> In a right triangle, <code>a² + b² = c²</code>. Where 'c' is the longest side (hypotenuse).";
+        } else if (query.includes("pemdas") || query.includes("order of operations")) {
+          response = "<strong>PEMDAS:</strong> The order to solve math: <br>1. Parentheses <br>2. Exponents <br>3. Mult/Div (left to right) <br>4. Add/Sub (left to right).";
+        } else if (query.includes("fraction")) {
+          response = "<strong>Fractions:</strong> Parts of a whole. The top (numerator) is how many parts you have; the bottom (denominator) is the total parts.";
+        } else if (query.includes("area")) {
+          response = "<strong>Area Formulas:</strong> <br>• Rectangle: <code>Length × Width</code> <br>• Triangle: <code>½ × Base × Height</code> <br>• Circle: <code>π × r²</code>";
+        } else if (query.includes("decimal")) {
+          response = "<strong>Decimals:</strong> A way to write fractions or mixed numbers using a dot. Each place to the right of the dot represents tenths, hundredths, etc.";
+        } else if (query.includes("square root")) {
+          response = "<strong>Square Root (√):</strong> A number that, when multiplied by itself, gives the original number. Example: <code>√25 = 5</code>.";
         } else if (query.includes("hi") || query.includes("hello")) {
-          addMessage("Hi! I'm ready to help. Try asking about prime numbers, fractions, or geometry formulas!", "ai");
+          response = "Hello! I am your Math AI. I can explain formulas, definitions, and rules. Ask me about <strong>Area</strong>, <strong>Primes</strong>, or <strong>PEMDAS</strong>!";
         } else {
-          addMessage("That's an interesting question! I am currently in <em>offline mode</em>, but I can explain common math terms like prime numbers, pi, or theorems if you ask about them!", "ai");
+          response = "I'm still learning that specific topic, but I can explain <strong>Primes, Pi, Area, Fractions, PEMDAS, and Square Roots</strong> right now!";
         }
-      }, 600);
+
+        addMessage(response, "ai");
+      }, 400);
     }
-    
-    // Allow 'Enter' key to send AI messages
-    document.getElementById('ai-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleAI();
-    });
   </script>
 </body>
 </html>
