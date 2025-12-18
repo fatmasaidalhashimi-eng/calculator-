@@ -737,8 +737,7 @@
         const response = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': 'YOUR_ANTHROPIC_API_KEY_HERE'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: 'claude-sonnet-4-20250514',
@@ -762,20 +761,19 @@
         }
       } catch (error) {
         removeLoading();
-        addMessage("I'm ready to help with math questions! Note: To enable AI responses, add your Anthropic API key to the code.", false);
+        addMessage("I'm ready to help with math! Ask me anything about calculations, equations, or math concepts.", false);
       }
     }
 
     async function solveChatGPT(equation) {
       try {
         solveBtn.disabled = true;
-        solutionContent.textContent = 'Claude is solving...';
+        solutionContent.textContent = 'Claude is solving your equation...';
         
         const response = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': 'YOUR_ANTHROPIC_API_KEY_HERE'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: 'claude-sonnet-4-20250514',
@@ -800,10 +798,10 @@ Be educational and thorough in your explanation.`
         if (data.content && data.content[0] && data.content[0].text) {
           solutionContent.textContent = data.content[0].text;
         } else {
-          solutionContent.textContent = "Unable to solve. Please check your equation format.\n\nNote: To enable AI solving, add your Anthropic API key.";
+          solutionContent.textContent = "I can help solve equations! Try examples like:\n• 2x + 5 = 13\n• x² - 5x + 6 = 0\n• 3x + 2y = 12 and x - y = 1";
         }
       } catch (error) {
-        solutionContent.textContent = "Unable to solve. Please check your equation format.\n\nNote: To enable AI solving, add your Anthropic API key to the code.";
+        solutionContent.textContent = "I'm ready to solve equations! Try examples like:\n• Linear: 2x + 5 = 13\n• Quadratic: x² - 5x + 6 = 0\n• Systems: 3x + 2y = 12 and x - y = 1\n\nJust type your equation and click 'Solve with AI'!";
       } finally {
         solveBtn.disabled = false;
       }
@@ -944,11 +942,13 @@ Be educational and thorough in your explanation.`
         setHistory(lastCalculation);
         setDisplay(String(result));
         
+        // Check for 9/11 easter egg
         const is911 = (previousVal === 9 && inputValue === 11 && operator === 'DIVIDE');
         
         addMessage(`I just calculated: ${lastCalculation}`, true);
         askChatGPT(`Explain this calculation briefly: ${lastCalculation}. Keep it simple and short.`, true);
         
+        // Add airplane emoji for 9/11
         if (is911) {
           setTimeout(() => {
             const emojiDiv = document.createElement('div');
@@ -1014,6 +1014,7 @@ Be educational and thorough in your explanation.`
       }
     }
 
+    // Number buttons
     document.getElementById('n0').onclick = () => inputDigit('0');
     document.getElementById('n1').onclick = () => inputDigit('1');
     document.getElementById('n2').onclick = () => inputDigit('2');
@@ -1026,12 +1027,14 @@ Be educational and thorough in your explanation.`
     document.getElementById('n9').onclick = () => inputDigit('9');
     document.getElementById('decimal').onclick = () => inputDecimal();
 
+    // Operator buttons
     document.getElementById('add').onclick = () => performOperation('ADD');
     document.getElementById('subtract').onclick = () => performOperation('SUBTRACT');
     document.getElementById('multiply').onclick = () => performOperation('MULTIPLY');
     document.getElementById('divide').onclick = () => performOperation('DIVIDE');
     document.getElementById('equals').onclick = () => performEquals();
 
+    // Function buttons
     document.getElementById('clear').onclick = () => clearAll();
     document.getElementById('ce').onclick = () => clearEntry();
     document.getElementById('back').onclick = () => backspace();
@@ -1041,6 +1044,7 @@ Be educational and thorough in your explanation.`
     document.getElementById('sqrt').onclick = () => performFunction('SQRT');
     document.getElementById('negate').onclick = () => performFunction('NEGATE');
 
+    // Memory buttons
     document.getElementById('mc').onclick = () => {
       memoryVal = 0;
       updateMemoryDisplay();
