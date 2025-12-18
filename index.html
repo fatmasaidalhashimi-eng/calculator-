@@ -524,19 +524,20 @@
     <div class="panel-content active" id="chatgptPanel">
       <div class="chat-area" id="chatArea">
         <div class="message ai-message">
-          <strong>👋 Hi! I'm Claude, your AI math assistant.</strong>
+          <strong>👋 Hi! I'm Claude, your comprehensive AI math assistant.</strong>
           <p style="margin-top: 8px; font-size: 14px;">I can help you with:</p>
           <ul style="margin-top: 5px; margin-left: 20px; font-size: 13px;">
-            <li>Explaining your calculations step-by-step</li>
-            <li>Solving complex math problems</li>
-            <li>Teaching mathematical concepts</li>
-            <li>Checking your work</li>
+            <li>Explaining ANY math concept (prime numbers, fractions, algebra, calculus, etc.)</li>
+            <li>Solving complex math problems step-by-step</li>
+            <li>Teaching mathematical concepts with examples</li>
+            <li>Answering questions like "What is...?" or "How does...?"</li>
+            <li>Checking your work and explaining calculations</li>
           </ul>
-          <p style="margin-top: 8px; font-size: 13px; color: #666;">Just perform a calculation and I'll automatically explain it, or ask me anything!</p>
+          <p style="margin-top: 8px; font-size: 13px; color: #666;">Try asking: "What are prime numbers?", "Explain the Pythagorean theorem", "What is calculus?", or any math question!</p>
         </div>
       </div>
       <div class="input-area">
-        <input type="text" id="aiInput" class="ai-input" placeholder="Ask me anything about math..." />
+        <input type="text" id="aiInput" class="ai-input" placeholder="Ask me: What are prime numbers? What is calculus?" />
         <button class="send-btn" id="sendBtn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
@@ -737,6 +738,8 @@
         
         // Build prompt based on context
         let userMessage = question;
+        let systemPrompt = "You are a comprehensive math tutor and calculator assistant. You can explain ANY mathematical concept, from basic arithmetic to advanced mathematics. When users ask 'what is X' or 'explain Y', provide clear, detailed explanations with examples. Topics include: prime numbers, fractions, algebra, geometry, calculus, trigonometry, statistics, number theory, and more. When explaining calculations, be brief (2-3 sentences). For concept questions, provide thorough explanations with examples and real-world applications. Always be educational, clear, and encouraging.";
+        
         if (isCalculation) {
           userMessage = `I just performed this calculation: ${question}. Please explain it briefly and clearly in 2-3 sentences.`;
         }
@@ -755,8 +758,8 @@
           },
           body: JSON.stringify({
             model: "claude-sonnet-4-20250514",
-            max_tokens: 1000,
-            system: "You are a helpful math tutor integrated into a calculator app. Explain mathematical concepts clearly and concisely. When explaining calculations, be brief (2-3 sentences) but educational. For general math questions, provide thorough but accessible explanations. Use simple language and examples.",
+            max_tokens: 2000,
+            system: systemPrompt,
             messages: conversationHistory
           })
         });
@@ -772,15 +775,19 @@
             .join("\n");
         }
         
+        if (!aiResponse) {
+          aiResponse = "I'm here to help with any math question! Ask me about concepts like prime numbers, fractions, algebra, geometry, calculus, or any other math topic.";
+        }
+        
         // Add AI response to conversation history
         conversationHistory.push({
           role: "assistant",
           content: aiResponse
         });
         
-        // Keep conversation history manageable (last 10 messages)
-        if (conversationHistory.length > 10) {
-          conversationHistory = conversationHistory.slice(-10);
+        // Keep conversation history manageable (last 12 messages)
+        if (conversationHistory.length > 12) {
+          conversationHistory = conversationHistory.slice(-12);
         }
         
         removeLoading();
@@ -789,7 +796,7 @@
       } catch (error) {
         console.error("API Error:", error);
         removeLoading();
-        addMessage("I'm ready to help with math! Ask me anything about calculations or math concepts.", false);
+        addMessage("I'm your comprehensive math assistant! Ask me anything: What are prime numbers? How do fractions work? What is calculus? I can explain any mathematical concept!", false);
       }
     }
 
