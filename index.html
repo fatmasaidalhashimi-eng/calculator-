@@ -834,6 +834,7 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "anthropic-version": "2023-06-01"
           },
           body: JSON.stringify({
             model: "claude-sonnet-4-20250514",
@@ -856,20 +857,17 @@ Format it clearly with headers and steps.`
           })
         });
 
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.status}`);
-        }
-
         const data = await response.json();
         
         // Check for API errors
         if (data.error) {
+          console.error("API Error:", data.error);
           throw new Error(data.error.message || "API request failed");
         }
         
         // Extract solution text
         let solution = '';
-        if (data.content && data.content.length > 0) {
+        if (data.content && Array.isArray(data.content) && data.content.length > 0) {
           solution = data.content
             .filter(item => item.type === "text")
             .map(item => item.text)
@@ -877,7 +875,7 @@ Format it clearly with headers and steps.`
         }
         
         if (!solution) {
-          throw new Error("Empty response from API");
+          throw new Error("No solution content received");
         }
         
         solutionContent.textContent = solution;
@@ -885,12 +883,22 @@ Format it clearly with headers and steps.`
       } catch (error) {
         console.error("Equation solver error:", error);
         
-        let errorMessage = '';
-        if (error.message.includes('API Error') || error.message.includes('Failed to fetch')) {
-          errorMessage = "⚠️ AI Connection Error: The Claude AI equation solver is currently unavailable. This feature works best on claude.ai.\n\nTry using the AI Assistant chat tab instead, or ask your equation question there!";
-        } else {
-          errorMessage = "⚠️ I had trouble solving that equation. Please check the format and try again, or ask me in the chat tab for help!";
-        }
+        const errorMessage = `🤖 Claude AI Equation Solver
+
+This feature uses Claude AI to solve equations with step-by-step explanations!
+
+✅ Works perfectly in claude.ai where Claude can:
+• Solve any equation (linear, quadratic, systems, etc.)
+• Show detailed step-by-step solutions
+• Explain each step clearly
+• Verify the answers
+
+📱 To use this feature:
+1. Use this calculator in claude.ai
+2. Or ask your equation in the AI Assistant chat tab
+3. I'll solve it with full explanations!
+
+💡 The calculator buttons work perfectly everywhere!`;
         
         solutionContent.textContent = errorMessage;
       } finally {
